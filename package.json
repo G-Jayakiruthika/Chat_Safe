@@ -1,0 +1,17 @@
+{
+  "name": "callsafe",
+  "version": "2.0.0",
+  "description": "Multilingual AI Scam X-Ray for India: message scam detection, SEBI @valid UPI Pay-Check, AI 'Paati' scam-baiter and 1930 complaint drafts. Gemini + Cloud Run, zero dependencies.",
+  "main": "server.js",
+  "private": true,
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --env-file=.env server.js",
+    "test": "node --test test/*.test.js",
+    "coverage": "node --test --experimental-test-coverage test/*.test.js"
+  }
+}

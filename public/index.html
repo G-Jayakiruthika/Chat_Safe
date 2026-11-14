@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="CALLSAFE — free multilingual AI scam checker for India. Check a message, verify a UPI ID before investing, and report to 1930.">
+  <meta name="theme-color" content="#0b3d2e">
+  <title>CALLSAFE — Scam X-Ray for every Indian</title>
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <a class="skip" href="#main" data-i18n="skip">Skip to main content</a>
+
+  <header class="top">
+    <div class="brand">
+      <img src="/icon.svg" alt="" width="40" height="40">
+      <div>
+        <h1>CALLSAFE</h1>
+        <p class="tagline" data-i18n="tagline">Scam X-Ray for every Indian — in your language</p>
+      </div>
+    </div>
+    <div class="controls" role="group" aria-label="Display settings">
+      <label for="lang" class="sr-only" data-i18n="language">Language</label>
+      <select id="lang" aria-label="Language">
+        <option value="en">English</option>
+        <option value="ta">தமிழ்</option>
+        <option value="hi">हिन्दी</option>
+      </select>
+      <button type="button" id="bigText" class="chip" aria-pressed="false" data-i18n="bigText">A+ Big text</button>
+      <button type="button" id="contrast" class="chip" aria-pressed="false" data-i18n="contrast">High contrast</button>
+    </div>
+  </header>
+
+  <main id="main">
+    <nav class="tabs" role="tablist" aria-label="CALLSAFE tools">
+      <button role="tab" id="tab-xray" aria-controls="panel-xray" aria-selected="true" data-i18n="tabXray">🔍 Check a message</button>
+      <button role="tab" id="tab-pay" aria-controls="panel-pay" aria-selected="false" tabindex="-1" data-i18n="tabPay">✅ Check before you pay</button>
+      <button role="tab" id="tab-paati" aria-controls="panel-paati" aria-selected="false" tabindex="-1" data-i18n="tabPaati">👵 Paati decoy</button>
+    </nav>
+
+    <!-- Scam X-Ray -->
+    <section id="panel-xray" role="tabpanel" aria-labelledby="tab-xray" class="panel">
+      <form id="xrayForm" novalidate>
+        <label for="message" class="label" data-i18n="msgLabel">Paste the WhatsApp / SMS / Telegram message, or what the caller said</label>
+        <textarea id="message" rows="6" maxlength="4000" required aria-describedby="msgHelp"></textarea>
+        <p id="msgHelp" class="help" data-i18n="msgHelp">Works with English, தமிழ், हिन्दी, Tanglish and Hinglish. Nothing is stored.</p>
+
+        <div class="samples" role="group" aria-label="Try an example">
+          <span data-i18n="tryExample">Try an example:</span>
+          <button type="button" class="chip" data-sample="stock" data-i18n="sStock">Stock-tip group</button>
+          <button type="button" class="chip" data-sample="arrest" data-i18n="sArrest">Digital arrest</button>
+          <button type="button" class="chip" data-sample="task" data-i18n="sTask">Part-time job</button>
+          <button type="button" class="chip" data-sample="safe" data-i18n="sSafe">Normal message</button>
+        </div>
+
+        <div class="actions">
+          <button type="submit" class="primary" id="analyzeBtn" data-i18n="analyze">Check for scam</button>
+          <button type="button" id="micBtn" class="secondary" aria-pressed="false" hidden data-i18n="speak">🎤 Speak instead</button>
+        </div>
+      </form>
+
+      <div id="xrayStatus" class="status" role="status" aria-live="polite"></div>
+
+      <article id="result" class="result" hidden aria-labelledby="verdict">
+        <div class="score-row">
+          <div class="gauge" id="gauge" role="meter" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Scam risk score">
+            <span id="scoreText">0</span>
+          </div>
+          <div>
+            <p class="level" id="levelText"></p>
+            <h2 id="verdict" tabindex="-1"></h2>
+            <p id="scamType" class="muted"></p>
+          </div>
+        </div>
+        <p id="explanation"></p>
+        <button type="button" id="readAloud" class="secondary" data-i18n="readAloud">🔊 Read aloud</button>
+
+        <h3 data-i18n="redFlags">Warning signs found</h3>
+        <ul id="redFlags" class="flags"></ul>
+
+        <h3 data-i18n="doNow">What to do now</h3>
+        <ol id="nextSteps"></ol>
+
+        <div id="upiBlock" hidden>
+          <h3 data-i18n="upiFound">Payment IDs in this message</h3>
+          <ul id="upiList" class="upi-list"></ul>
+        </div>
+
+        <div id="complaintBlock" hidden>
+          <h3 data-i18n="complaint">Ready-made 1930 complaint</h3>
+          <label for="complaint" class="sr-only">Complaint draft</label>
+          <textarea id="complaint" rows="8" readonly></textarea>
+          <div class="actions">
+            <button type="button" id="copyComplaint" class="secondary" data-i18n="copy">Copy</button>
+            <a id="familyAlert" class="button secondary" target="_blank" rel="noopener noreferrer" data-i18n="family">👨‍👩‍👧 Alert family on WhatsApp</a>
+            <a class="button secondary" href="https://cybercrime.gov.in" target="_blank" rel="noopener noreferrer" data-i18n="fileOnline">File at cybercrime.gov.in</a>
+            <a class="button danger" href="tel:1930" data-i18n="call1930">📞 Call 1930</a>
+          </div>
+        </div>
+        <p id="engine" class="muted small"></p>
+      </article>
+    </section>
+
+    <!-- Pay-Check -->
+    <section id="panel-pay" role="tabpanel" aria-labelledby="tab-pay" class="panel" hidden>
+      <p data-i18n="payIntro">Someone asking you to pay for stock tips, IPO allotment or a "trading account"? Since 1 Oct 2025, SEBI-registered brokers and advisers can only collect money through "@valid" UPI IDs.</p>
+      <form id="payForm" novalidate>
+        <label for="upi" class="label" data-i18n="upiLabel">UPI ID you were asked to pay</label>
+        <input id="upi" type="text" inputmode="email" autocomplete="off" spellcheck="false" maxlength="300" placeholder="example: abc.brk@validhdfc" required>
+        <div class="actions"><button type="submit" class="primary" data-i18n="checkUpi">Check UPI ID</button></div>
+      </form>
+      <div id="payResult" class="status" role="status" aria-live="polite"></div>
+    </section>
+
+    <!-- Paati decoy -->
+    <section id="panel-paati" role="tabpanel" aria-labelledby="tab-paati" class="panel" hidden>
+      <p data-i18n="paatiIntro">Meet Kamala Paati — an AI grandma who keeps scammers busy so they can't target someone else. Paste the scammer's message, copy Paati's reply back. She never shares any real details.</p>
+      <ol id="chatLog" class="chat" aria-live="polite" aria-label="Decoy conversation"></ol>
+      <form id="paatiForm" novalidate>
+        <label for="scammerMsg" class="label" data-i18n="scammerLabel">Scammer's latest message</label>
+        <textarea id="scammerMsg" rows="3" maxlength="4000" required></textarea>
+        <div class="actions"><button type="submit" class="primary" data-i18n="paatiReply">Get Paati's reply</button></div>
+      </form>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <p data-i18n="footer">CALLSAFE gives guidance, not legal advice. In an emergency call 1930 (cyber fraud) or 112.</p>
+  </footer>
+
+  <script src="/app.js" defer></script>
+</body>
+</html>
