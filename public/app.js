@@ -21,7 +21,7 @@
       upiLabel: 'பணம் அனுப்பச் சொன்ன UPI ஐடி', checkUpi: 'UPI ஐடியைச் சரிபார்',
       paatiIntro: 'கமலா பாட்டியை சந்தியுங்கள் — மோசடிக்காரர்களின் நேரத்தை வீணடிக்கும் AI பாட்டி. அவர் எந்த உண்மை விவரத்தையும் சொல்ல மாட்டார்.',
       scammerLabel: 'மோசடிக்காரரின் சமீபத்திய செய்தி', paatiReply: 'பாட்டியின் பதில்',
-      footer: 'CALLSAFE வழிகாட்டல் மட்டுமே. அவசரத்தில் 1930 (சைபர் மோசடி) அல்லது 112-ஐ அழையுங்கள்.',
+      footer: 'Chat_Safe வழிகாட்டல் மட்டுமே. அவசரத்தில் 1930 (சைபர் மோசடி) அல்லது 112-ஐ அழையுங்கள்.',
       checking: 'சரிபார்க்கிறது…', empty: 'முதலில் ஒரு செய்தியை ஒட்டவும்.', copied: 'நகலெடுக்கப்பட்டது ✔',
       listening: 'கேட்கிறது… பேசுங்கள்', score: 'ஆபத்து மதிப்பெண்',
       level_safe: 'பாதுகாப்பு', level_suspicious: 'சந்தேகம்', level_high: 'அதிக ஆபத்து', level_critical: 'மிக ஆபத்து',
@@ -42,7 +42,7 @@
       upiLabel: 'जिस UPI आईडी पर पैसे भेजने को कहा गया', checkUpi: 'UPI आईडी जांचें',
       paatiIntro: 'मिलिए कमला दादी से — एक AI दादी जो ठगों का समय बर्बाद करती है। वह कभी कोई असली जानकारी नहीं देती।',
       scammerLabel: 'ठग का ताज़ा संदेश', paatiReply: 'दादी का जवाब',
-      footer: 'CALLSAFE केवल मार्गदर्शन है। आपात स्थिति में 1930 (साइबर फ्रॉड) या 112 पर कॉल करें।',
+      footer: 'Chat_Safe केवल मार्गदर्शन है। आपात स्थिति में 1930 (साइबर फ्रॉड) या 112 पर कॉल करें।',
       checking: 'जांच हो रही है…', empty: 'पहले कोई संदेश डालें।', copied: 'कॉपी हो गया ✔',
       listening: 'सुन रहा है… बोलिए', score: 'जोखिम स्कोर',
       level_safe: 'सुरक्षित', level_suspicious: 'संदिग्ध', level_high: 'उच्च जोखिम', level_critical: 'गंभीर खतरा',
@@ -84,13 +84,13 @@
     document.querySelectorAll('[data-i18n]').forEach((el) => {
       el.textContent = I18N[lang][el.dataset.i18n] || originals.get(el);
     });
-    try { localStorage.setItem('callsafe.lang', lang); } catch { /* storage may be blocked */ }
+    try { localStorage.setItem('chatsafe.lang', lang); } catch { /* storage may be blocked */ }
   }
 
   function toggleSetting(btn, cls) {
     const on = document.body.classList.toggle(cls);
     btn.setAttribute('aria-pressed', String(on));
-    try { localStorage.setItem(`callsafe.${cls}`, on ? '1' : ''); } catch { /* ignore */ }
+    try { localStorage.setItem(`chatsafe.${cls}`, on ? '1' : ''); } catch { /* ignore */ }
   }
 
   /* ---------- networking ---------- */
@@ -154,7 +154,7 @@
 
     $('complaintBlock').hidden = !r.complaint;
     $('complaint').value = r.complaint;
-    const alertText = `⚠ CALLSAFE: ${r.verdict} (${r.score}/100, ${r.scamType}). Please call me before sending any money.`;
+    const alertText = `⚠ Chat_Safe: ${r.verdict} (${r.score}/100, ${r.scamType}). Please call me before sending any money.`;
     $('familyAlert').href = `https://wa.me/?text=${encodeURIComponent(alertText)}`;
 
     $('engine').textContent = `Engine: ${r.engine}${r.aiError ? ` · ${r.aiError}` : ''}${r.cached ? ' · cached' : ''}`;
@@ -305,10 +305,10 @@
   setupMic();
 
   try {
-    const saved = localStorage.getItem('callsafe.lang');
+    const saved = localStorage.getItem('chatsafe.lang');
     if (saved) { $('lang').value = saved; applyLanguage(saved); }
     for (const [cls, id] of [['big', 'bigText'], ['contrast', 'contrast']]) {
-      if (localStorage.getItem(`callsafe.${cls}`)) toggleSetting($(id), cls);
+      if (localStorage.getItem(`chatsafe.${cls}`)) toggleSetting($(id), cls);
     }
   } catch { /* storage may be blocked */ }
 })();

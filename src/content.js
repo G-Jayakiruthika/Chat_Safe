@@ -92,10 +92,10 @@ function buildComplaint({ text, score, scamType, indicators, now = new Date() })
   const list = (label, arr) => (arr.length ? `${label}: ${arr.join(', ')}` : null);
   const excerpt = text.length > 600 ? `${text.slice(0, 600)}…` : text;
   const lines = [
-    'NATIONAL CYBER CRIME REPORTING PORTAL — COMPLAINT DRAFT (prepared by CALLSAFE)',
+    'NATIONAL CYBER CRIME REPORTING PORTAL — COMPLAINT DRAFT (prepared by Chat_Safe)',
     `Date/time noted: ${now.toISOString()}`,
     `Suspected category: ${scamType}`,
-    `CALLSAFE risk score: ${score}/100`,
+    `Chat_Safe risk score: ${score}/100`,
     '',
     'Suspect identifiers:',
     list('  UPI IDs', indicators.upiIds),

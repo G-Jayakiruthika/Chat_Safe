@@ -1,5 +1,5 @@
 {
-  "name": "callsafe",
+  "name": "chat_safe",
   "version": "2.0.0",
   "description": "Multilingual AI Scam X-Ray for India: message scam detection, SEBI @valid UPI Pay-Check, AI 'Paati' scam-baiter and 1930 complaint drafts. Gemini + Cloud Run, zero dependencies.",
   "main": "server.js",

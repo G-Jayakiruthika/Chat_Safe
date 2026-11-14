@@ -1,6 +1,6 @@
 {
-  "name": "CALLSAFE — Scam X-Ray",
-  "short_name": "CALLSAFE",
+  "name": "Chat_Safe — Scam X-Ray",
+  "short_name": "Chat_Safe",
   "description": "Free multilingual AI scam checker for India",
   "start_url": "/",
   "display": "standalone",

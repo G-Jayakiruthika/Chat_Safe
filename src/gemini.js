@@ -24,7 +24,7 @@ const ANALYSIS_SCHEMA = Object.freeze({
 });
 
 const ANALYST_INSTRUCTION = [
-  'You are CALLSAFE, a fraud analyst protecting Indian phone users, many of them elderly or with low literacy.',
+  'You are Chat_Safe, a fraud analyst protecting Indian phone users, many of them elderly or with low literacy.',
   'You know Indian scam playbooks: fake stock-tip/IPO WhatsApp & Telegram groups, "digital arrest" by fake CBI/ED/police,',
   'KYC/OTP/account-block, FedEx/courier drugs parcel, part-time task jobs, electricity disconnection, loan-app sextortion,',
   'cloned-voice family emergencies. You understand code-mixed Tanglish and Hinglish.',

@@ -11,7 +11,7 @@ const gemini = createGeminiClient({
 
 const server = createServer({ gemini });
 server.listen(port, () => {
-  console.log(`CALLSAFE listening on :${port} (AI ${gemini.enabled ? `on: ${gemini.model}` : 'off: offline rules only'})`);
+  console.log(`Chat_Safe listening on :${port} (AI ${gemini.enabled ? `on: ${gemini.model}` : 'off: offline rules only'})`);
 });
 
 const shutdown = () => server.close(() => process.exit(0));

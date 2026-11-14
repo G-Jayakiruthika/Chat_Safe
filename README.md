@@ -1,8 +1,8 @@
-# 🛡️ CALLSAFE — Scam X-Ray for every Indian
+# 🛡️ Chat_Safe — Scam X-Ray for every Indian
 
 **PromptWars X Noor AITH — Build for Impact** · Domain: *Cybersecurity & Digital Safety* + *Accessibility & Inclusion*
 
-CALLSAFE is a free, multilingual AI tool that lets anyone (including elders and people who struggle to read) paste or **speak** a suspicious message or call and instantly get:
+Chat_Safe is a free, multilingual AI tool that lets anyone (including elders and people who struggle to read) paste or **speak** a suspicious message or call and instantly get:
 
 1. **Scam X-Ray**: a 0–100 risk score, the scam type, and the pressure tactics being used, read aloud in **English, தமிழ் or हिन्दी** (Tanglish and Hinglish also work).
 2. **Pay-Check**: verifies whether the UPI ID you're asked to "invest" through is a **SEBI-validated `@valid` handle**.
@@ -18,7 +18,7 @@ CALLSAFE is a free, multilingual AI tool that lets anyone (including elders and 
 - **77%** of that loss came from **fake investment schemes** (WhatsApp/Telegram "VIP stock-tip" groups), against **8%** from "digital arrest".
 - Telcos such as Airtel already block spam *calls* at network level. But a scam that arrives as a **WhatsApp group message asking you to pay a personal UPI ID** gets through, and many victims cannot read English warnings.
 
-## 2. What makes CALLSAFE different
+## 2. What makes Chat_Safe different
 
 | Idea | Inspired by | In India before? |
 |---|---|---|
@@ -69,7 +69,7 @@ npm run coverage              # line coverage report
 ### Deploy to Cloud Run
 
 ```bash
-gcloud run deploy callsafe --source . --region asia-south1 --allow-unauthenticated \
+gcloud run deploy chat-safe --source . --region asia-south1 --allow-unauthenticated \
   --set-env-vars GEMINI_MODEL=gemini-2.5-flash \
   --set-secrets GEMINI_API_KEY=gemini-api-key:latest
 ```
@@ -106,4 +106,4 @@ gcloud run deploy callsafe --source . --region asia-south1 --allow-unauthenticat
 - Opt-in shared scam-indicator feed, aggregated for police reporting.
 
 ---
-*CALLSAFE gives guidance, not legal or financial advice. In an emergency call **1930** or **112**.*
+*Chat_Safe gives guidance, not legal or financial advice. In an emergency call **1930** or **112**.*
