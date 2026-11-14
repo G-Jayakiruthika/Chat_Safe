@@ -5,10 +5,19 @@
  * 1930 complaint draft. Used when Gemini is unavailable and to keep advice consistent.
  */
 
-const SUPPORTED_LANGS = Object.freeze(['en', 'ta', 'hi']);
+const { safeLang } = require('./languages');
 
-/** @param {unknown} lang */
-const safeLang = (lang) => (SUPPORTED_LANGS.includes(/** @type {string} */ (lang)) ? /** @type {string} */ (lang) : 'en');
+/** Languages with hand-written offline text. Others use Gemini, or English offline. */
+const OFFLINE_LANGS = Object.freeze(['en', 'ta', 'hi']);
+
+/**
+ * Pick the offline table for a language, falling back to English.
+ * @template T
+ * @param {Record<string, T>} table
+ * @param {unknown} lang
+ * @returns {T}
+ */
+const localized = (table, lang) => table[safeLang(lang)] || table.en;
 
 const VERDICT = Object.freeze({
   en: {
@@ -79,7 +88,7 @@ const DECOY_FALLBACK = Object.freeze({
  * @param {number} turn
  */
 function decoyFallback(lang, turn) {
-  const lines = DECOY_FALLBACK[safeLang(lang)];
+  const lines = localized(DECOY_FALLBACK, lang);
   const i = Math.abs(Math.trunc(Number(turn) || 0)) % lines.length;
   return lines[i];
 }
@@ -113,4 +122,61 @@ function buildComplaint({ text, score, scamType, indicators, now = new Date() })
   return lines.filter((l) => l !== null).join('\n');
 }
 
-module.exports = { SUPPORTED_LANGS, safeLang, VERDICT, STEPS, decoyFallback, buildComplaint };
+const AGENT_FALLBACK = Object.freeze({
+  en: [
+    "I'm Kavach, your cyber-safety guardian. Read me or paste any message, call or payment request and I'll check it for scams.",
+    'Tip: real banks, police and courier companies never ask for OTP, PIN or money over a phone or video call.',
+    'Tip: before paying for stock tips or a trading account, check that the UPI ID ends in "@valid" — use my Pay-Check tab.',
+    'Tip: if you already sent money, call 1930 within the first hour. Fast reporting can freeze the scammer\'s account.',
+  ],
+  ta: [
+    'நான் கவச், உங்கள் சைபர் பாதுகாவலன். எந்த செய்தி, அழைப்பு அல்லது பண கோரிக்கையையும் சொல்லுங்கள், மோசடியா என்று சரிபார்க்கிறேன்.',
+    'குறிப்பு: உண்மையான வங்கி, போலீஸ், கூரியர் யாரும் போனில் OTP, PIN அல்லது பணம் கேட்க மாட்டார்கள்.',
+    'குறிப்பு: பங்கு டிப்ஸுக்கு பணம் அனுப்பும் முன் UPI ஐடி "@valid" என்று முடிகிறதா பாருங்கள்.',
+    'குறிப்பு: பணம் அனுப்பிவிட்டால் முதல் ஒரு மணி நேரத்தில் 1930-க்கு அழையுங்கள்.',
+  ],
+  hi: [
+    'मैं कवच हूँ, आपका साइबर सुरक्षा रक्षक। कोई भी संदेश, कॉल या पेमेंट रिक्वेस्ट बताइए, मैं स्कैम की जांच करूँगा।',
+    'सुझाव: असली बैंक, पुलिस या कूरियर कभी फोन पर OTP, PIN या पैसे नहीं मांगते।',
+    'सुझाव: स्टॉक टिप के लिए पैसे भेजने से पहले देखें कि UPI आईडी "@valid" पर खत्म होती है या नहीं।',
+    'सुझाव: अगर पैसे भेज दिए हैं तो पहले घंटे में 1930 पर कॉल करें।',
+  ],
+});
+
+/** Offline answers to the most common questions, matched by keywords in any of the three scripts. */
+const AGENT_FAQ = Object.freeze([
+  {
+    match: /digital\s*arrest|डिजिटल\s*अरेस्ट|டிஜிட்டல்\s*கைது/i,
+    en: '"Digital arrest" is a scam. Fake CBI, police or customs officers keep you on a video call and demand money. Real police never arrest anyone on a video call. Hang up and call 1930.',
+    ta: '"டிஜிட்டல் கைது" ஒரு மோசடி. போலி CBI, போலீஸ் வீடியோ அழைப்பில் வைத்து பணம் கேட்பார்கள். உண்மையான போலீஸ் வீடியோ அழைப்பில் கைது செய்ய மாட்டார்கள். துண்டித்து 1930-க்கு அழையுங்கள்.',
+    hi: '"डिजिटल अरेस्ट" एक धोखा है। नकली CBI या पुलिस वीडियो कॉल पर रोककर पैसे मांगते हैं। असली पुलिस वीडियो कॉल पर गिरफ्तार नहीं करती। कॉल काटें और 1930 पर कॉल करें।',
+  },
+  {
+    match: /sent\s*money|lost\s*money|cheated|पैसे\s*भेज|ठग\s*को|பணம்\s*அனுப்பி/i,
+    en: 'Act fast. Call 1930 now — the first hour matters most. Then call your bank to block the transaction and file a complaint at cybercrime.gov.in. Keep screenshots of every message.',
+    ta: 'உடனே செயல்படுங்கள். இப்போதே 1930-க்கு அழையுங்கள் — முதல் ஒரு மணி நேரம் முக்கியம். பின் உங்கள் வங்கியை அழைத்து பரிவர்த்தனையை நிறுத்தி, cybercrime.gov.in-ல் புகார் கொடுங்கள்.',
+    hi: 'जल्दी करें। अभी 1930 पर कॉल करें — पहला घंटा सबसे ज़रूरी है। फिर बैंक को कॉल करके ट्रांज़ैक्शन रुकवाएं और cybercrime.gov.in पर शिकायत करें। सभी संदेशों के स्क्रीनशॉट रखें।',
+  },
+  {
+    match: /\bbank\b|बैंक|வங்கி/i,
+    en: 'Hang up and call the number printed on the back of your card or in your bank app. A real bank will never ask for your OTP, PIN, CVV or ask you to install an app.',
+    ta: 'அழைப்பை துண்டித்து, உங்கள் கார்டின் பின்புறம் அல்லது வங்கி ஆப்பில் உள்ள எண்ணுக்கு நீங்களே அழையுங்கள். உண்மையான வங்கி OTP, PIN, CVV கேட்காது.',
+    hi: 'कॉल काटें और अपने कार्ड के पीछे या बैंक ऐप में दिए नंबर पर खुद कॉल करें। असली बैंक कभी OTP, PIN, CVV नहीं मांगता, न ही कोई ऐप डाउनलोड करवाता है।',
+  },
+]);
+
+/**
+ * Offline reply for the voice agent when the AI is not available.
+ * Answers common questions first, then cycles through safety tips.
+ * @param {string} lang
+ * @param {number} turn
+ * @param {string} [question]
+ */
+function agentFallback(lang, turn, question = '') {
+  const faq = AGENT_FAQ.find((f) => f.match.test(question));
+  if (faq) return faq[safeLang(lang)] || faq.en;
+  const lines = localized(AGENT_FALLBACK, lang);
+  return lines[Math.abs(Math.trunc(Number(turn) || 0)) % lines.length];
+}
+
+module.exports = { OFFLINE_LANGS, safeLang, localized, VERDICT, STEPS, decoyFallback, agentFallback, buildComplaint };

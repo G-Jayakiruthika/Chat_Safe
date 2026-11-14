@@ -2,59 +2,16 @@
 
 (() => {
   const $ = (id) => document.getElementById(id);
+  const I18N = window.CHATSAFE_I18N;
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const MOOD_RGB = { idle: [34, 211, 238], safe: [52, 211, 153], suspicious: [251, 191, 36], high: [251, 146, 60], critical: [248, 113, 113] };
 
-  /** UI strings. Keys match data-i18n attributes. */
-  const I18N = {
-    en: {},
-    ta: {
-      skip: 'முக்கிய பகுதிக்குச் செல்', tagline: 'ஒவ்வொரு இந்தியருக்கும் மோசடி எக்ஸ்-ரே — உங்கள் மொழியில்',
-      bigText: 'A+ பெரிய எழுத்து', contrast: 'அதிக வேறுபாடு',
-      tabXray: '🔍 செய்தியைச் சரிபார்', tabPay: '✅ பணம் அனுப்பும் முன் சரிபார்', tabPaati: '👵 பாட்டி டிகாய்',
-      msgLabel: 'WhatsApp / SMS / Telegram செய்தியை அல்லது அழைத்தவர் சொன்னதை ஒட்டவும்',
-      msgHelp: 'தமிழ், English, हिन्दी, Tanglish எல்லாம் வேலை செய்யும். எதுவும் சேமிக்கப்படாது.',
-      tryExample: 'உதாரணம்:', sStock: 'பங்கு டிப்ஸ் குழு', sArrest: 'டிஜிட்டல் கைது', sTask: 'பகுதி நேர வேலை', sSafe: 'சாதாரண செய்தி',
-      analyze: 'மோசடியா என்று சரிபார்', speak: '🎤 பேசுங்கள்', readAloud: '🔊 சத்தமாகப் படி',
-      redFlags: 'கண்டறிந்த எச்சரிக்கை அறிகுறிகள்', doNow: 'இப்போது என்ன செய்ய வேண்டும்',
-      upiFound: 'இந்த செய்தியில் உள்ள பண ஐடிகள்', complaint: 'தயார் 1930 புகார்', copy: 'நகலெடு',
-      family: '👨‍👩‍👧 குடும்பத்துக்கு WhatsApp எச்சரிக்கை', fileOnline: 'cybercrime.gov.in-ல் புகார்', call1930: '📞 1930 அழை',
-      payIntro: 'பங்கு டிப்ஸ், IPO, "டிரேடிங் அக்கவுண்ட்"க்கு பணம் கேட்கிறார்களா? 1 அக் 2025 முதல் SEBI பதிவு பெற்றவர்கள் "@valid" UPI ஐடி மூலம் மட்டுமே பணம் பெற முடியும்.',
-      upiLabel: 'பணம் அனுப்பச் சொன்ன UPI ஐடி', checkUpi: 'UPI ஐடியைச் சரிபார்',
-      paatiIntro: 'கமலா பாட்டியை சந்தியுங்கள் — மோசடிக்காரர்களின் நேரத்தை வீணடிக்கும் AI பாட்டி. அவர் எந்த உண்மை விவரத்தையும் சொல்ல மாட்டார்.',
-      scammerLabel: 'மோசடிக்காரரின் சமீபத்திய செய்தி', paatiReply: 'பாட்டியின் பதில்',
-      footer: 'Chat_Safe வழிகாட்டல் மட்டுமே. அவசரத்தில் 1930 (சைபர் மோசடி) அல்லது 112-ஐ அழையுங்கள்.',
-      checking: 'சரிபார்க்கிறது…', empty: 'முதலில் ஒரு செய்தியை ஒட்டவும்.', copied: 'நகலெடுக்கப்பட்டது ✔',
-      listening: 'கேட்கிறது… பேசுங்கள்', score: 'ஆபத்து மதிப்பெண்',
-      level_safe: 'பாதுகாப்பு', level_suspicious: 'சந்தேகம்', level_high: 'அதிக ஆபத்து', level_critical: 'மிக ஆபத்து',
-      them: 'மோசடிக்காரர்', paati: 'பாட்டி',
-    },
-    hi: {
-      skip: 'मुख्य भाग पर जाएं', tagline: 'हर भारतीय के लिए स्कैम एक्स-रे — आपकी भाषा में',
-      bigText: 'A+ बड़े अक्षर', contrast: 'हाई कॉन्ट्रास्ट',
-      tabXray: '🔍 संदेश जांचें', tabPay: '✅ पैसे भेजने से पहले जांचें', tabPaati: '👵 दादी डिकॉय',
-      msgLabel: 'WhatsApp / SMS / Telegram संदेश या कॉल करने वाले की बात यहाँ डालें',
-      msgHelp: 'हिन्दी, English, தமிழ், Hinglish सब चलेगा। कुछ भी सेव नहीं होता।',
-      tryExample: 'उदाहरण:', sStock: 'स्टॉक टिप ग्रुप', sArrest: 'डिजिटल अरेस्ट', sTask: 'पार्ट-टाइम जॉब', sSafe: 'सामान्य संदेश',
-      analyze: 'स्कैम जांचें', speak: '🎤 बोलकर बताएं', readAloud: '🔊 पढ़कर सुनाएं',
-      redFlags: 'मिले चेतावनी संकेत', doNow: 'अभी क्या करें',
-      upiFound: 'इस संदेश में पेमेंट आईडी', complaint: 'तैयार 1930 शिकायत', copy: 'कॉपी करें',
-      family: '👨‍👩‍👧 परिवार को WhatsApp अलर्ट', fileOnline: 'cybercrime.gov.in पर शिकायत', call1930: '📞 1930 पर कॉल',
-      payIntro: 'स्टॉक टिप, IPO या "ट्रेडिंग अकाउंट" के लिए पैसे मांगे जा रहे हैं? 1 अक्टूबर 2025 से SEBI-पंजीकृत ब्रोकर सिर्फ "@valid" UPI आईडी से पैसे ले सकते हैं।',
-      upiLabel: 'जिस UPI आईडी पर पैसे भेजने को कहा गया', checkUpi: 'UPI आईडी जांचें',
-      paatiIntro: 'मिलिए कमला दादी से — एक AI दादी जो ठगों का समय बर्बाद करती है। वह कभी कोई असली जानकारी नहीं देती।',
-      scammerLabel: 'ठग का ताज़ा संदेश', paatiReply: 'दादी का जवाब',
-      footer: 'Chat_Safe केवल मार्गदर्शन है। आपात स्थिति में 1930 (साइबर फ्रॉड) या 112 पर कॉल करें।',
-      checking: 'जांच हो रही है…', empty: 'पहले कोई संदेश डालें।', copied: 'कॉपी हो गया ✔',
-      listening: 'सुन रहा है… बोलिए', score: 'जोखिम स्कोर',
-      level_safe: 'सुरक्षित', level_suspicious: 'संदिग्ध', level_high: 'उच्च जोखिम', level_critical: 'गंभीर खतरा',
-      them: 'ठग', paati: 'दादी',
-    },
-  };
-  const EN_DEFAULTS = {
-    checking: 'Checking…', empty: 'Please paste a message first.', copied: 'Copied ✔', listening: 'Listening… speak now',
-    score: 'Risk score', level_safe: 'Safe', level_suspicious: 'Suspicious', level_high: 'High risk', level_critical: 'Critical',
-    them: 'Scammer', paati: 'Paati',
-  };
-  const SPEECH_LANG = { en: 'en-IN', ta: 'ta-IN', hi: 'hi-IN' };
+  /** Fallback list so the picker works even before /api/languages answers. */
+  let languages = [{ code: 'en', name: 'English', native: 'English', speech: 'en-IN' }];
+  let lang = 'en';
+  let agentTurn = 0;
+  let decoyTurn = 0;
+  let lastResult = null;
 
   const SAMPLES = {
     stock:
@@ -64,75 +21,231 @@
       'This is Inspector Sharma from CBI Mumbai. A FedEx parcel in your name has drugs and 5 passports. ' +
       'An arrest warrant is issued. Stay on this video call, do not tell anyone in your family. ' +
       'Transfer ₹1,50,000 to RBI verification account 501002345678 IFSC HDFC0001234 within 30 minutes or you go to jail.',
-    task:
-      'Hi! Part time job from home. Like YouTube videos and earn ₹3000 daily. First do prepaid task of ₹500 to start. Contact 98765 43210 on WhatsApp.',
+    task: 'Hi! Part time job from home. Like YouTube videos and earn ₹3000 daily. First do prepaid task of ₹500 to start. Contact 98765 43210 on WhatsApp.',
     safe: 'Hi Amma, reached Chennai safely. Will call you after dinner. Please take your BP tablet on time.',
   };
 
-  let lang = 'en';
-  let lastResult = null;
-  let decoyTurn = 0;
-  const t = (key) => I18N[lang][key] || EN_DEFAULTS[key] || key;
+  const t = (key, vars = {}) => {
+    const s = (I18N[lang] && I18N[lang][key]) || I18N.en[key] || key;
+    return s.replace(/\{(\w+)\}/g, (_, k) => vars[k] ?? '');
+  };
+  const currentLang = () => languages.find((l) => l.code === lang) || languages[0];
+  const store = (k, v) => { try { localStorage.setItem(`chatsafe.${k}`, v); } catch { /* storage blocked */ } };
+  const load = (k) => { try { return localStorage.getItem(`chatsafe.${k}`); } catch { return null; } };
 
-  /* ---------- i18n & settings ---------- */
-  const originals = new Map();
-  document.querySelectorAll('[data-i18n]').forEach((el) => originals.set(el, el.textContent));
+  /* ---------- Visual engines ---------- */
+  const kavach = window.createKavach($('kavach'), { reducedMotion });
+  const bg = window.createBackground($('bg'), { reducedMotion });
+  const isDark = () => document.documentElement.dataset.theme !== 'light';
 
-  function applyLanguage(next) {
-    lang = I18N[next] ? next : 'en';
+  function setMood(mood) {
+    kavach.setMood(mood);
+    bg.setColor(MOOD_RGB[mood] || MOOD_RGB.idle, isDark() ? 0.6 : 0.35);
+  }
+  function setAgentState(state) {
+    kavach.setState(state);
+    $('agentState').textContent = t(`state_${state}`);
+  }
+
+  /* ---------- Language ---------- */
+  function applyLanguage(code) {
+    lang = languages.some((l) => l.code === code) ? code : 'en';
+    const info = currentLang();
     document.documentElement.lang = lang;
-    document.querySelectorAll('[data-i18n]').forEach((el) => {
-      el.textContent = I18N[lang][el.dataset.i18n] || originals.get(el);
-    });
-    try { localStorage.setItem('chatsafe.lang', lang); } catch { /* storage may be blocked */ }
+    // Menus are English for RTL languages, so the layout stays LTR; replies use dir="auto".
+    document.documentElement.dir = I18N[lang] && info.rtl ? 'rtl' : 'ltr';
+    document.querySelectorAll('[data-i18n]').forEach((el) => { el.textContent = t(el.dataset.i18n); });
+    document.querySelectorAll('[data-i18n-placeholder]').forEach((el) => { el.placeholder = t(el.dataset.i18nPlaceholder); });
+    const note = $('uiNote');
+    note.hidden = Boolean(I18N[lang]);
+    note.textContent = note.hidden ? '' : t('uiNote', { lang: `${info.native} (${info.name})` });
+    $('micLabel').textContent = t(recognizer ? 'micStop' : 'micStart');
+    updateThemeLabel();
+    store('lang', lang);
   }
 
-  function toggleSetting(btn, cls) {
-    const on = document.body.classList.toggle(cls);
-    btn.setAttribute('aria-pressed', String(on));
-    try { localStorage.setItem(`chatsafe.${cls}`, on ? '1' : ''); } catch { /* ignore */ }
+  async function loadLanguages() {
+    try {
+      const res = await fetch('/api/languages');
+      if (res.ok) languages = (await res.json()).languages;
+    } catch { /* keep English fallback */ }
+    $('lang').replaceChildren(...languages.map((l) => new Option(`${l.native} — ${l.name}`, l.code)));
+    const saved = load('lang');
+    $('lang').value = languages.some((l) => l.code === saved) ? saved : 'en';
+    applyLanguage($('lang').value);
   }
 
-  /* ---------- networking ---------- */
+  /* ---------- Theme & text size ---------- */
+  function updateThemeLabel() {
+    $('themeToggle').setAttribute('aria-label', t(isDark() ? 'themeLight' : 'themeDark'));
+  }
+  function toggleTheme() {
+    const next = isDark() ? 'light' : 'dark';
+    document.documentElement.dataset.theme = next;
+    store('theme', next);
+    kavach.setDark(next === 'dark');
+    setMood(kavach.mood);
+    updateThemeLabel();
+  }
+
+  /* ---------- Networking ---------- */
   async function api(path, body) {
-    const res = await fetch(path, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    });
+    const res = await fetch(path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(data.error || `Error ${res.status}`);
     return data;
   }
 
-  const setStatus = (el, msg) => { el.textContent = msg; };
+  /* ---------- Voice out (text-to-speech) ---------- */
+  let voices = [];
+  const refreshVoices = () => { voices = 'speechSynthesis' in window ? window.speechSynthesis.getVoices() : []; };
+  if ('speechSynthesis' in window) {
+    refreshVoices();
+    window.speechSynthesis.addEventListener('voiceschanged', refreshVoices);
+  }
+  const voiceFor = (code) => {
+    const tag = currentLang().speech.toLowerCase();
+    return voices.find((v) => v.lang.toLowerCase() === tag) || voices.find((v) => v.lang.toLowerCase().startsWith(`${code}-`));
+  };
 
+  /**
+   * Speak text with lip-sync. Resolves when finished (or immediately if no voice is available).
+   * @param {string} text
+   */
+  function speak(text) {
+    return new Promise((resolve) => {
+      if (!text || !('speechSynthesis' in window)) { resolve(false); return; }
+      const voice = voiceFor(lang);
+      if (!voice && lang !== 'en') {
+        addAgentLine('kavach', t('noVoice', { lang: currentLang().name }), 'note');
+        resolve(false);
+        return;
+      }
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = currentLang().speech;
+      if (voice) u.voice = voice;
+      u.rate = 0.95;
+      u.onstart = () => setAgentState('speaking');
+      u.onboundary = () => kavach.pulse();
+      u.onend = u.onerror = () => { setAgentState('idle'); resolve(true); };
+      window.speechSynthesis.speak(u);
+    });
+  }
+
+  /* ---------- Voice in (speech-to-text) ---------- */
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  let recognizer = null;
+
+  function toggleMic() {
+    if (!SR) { addAgentLine('kavach', t('noMic'), 'note'); return; }
+    if (recognizer) { recognizer.stop(); return; }
+    window.speechSynthesis?.cancel();
+    const rec = new SR();
+    recognizer = rec;
+    rec.lang = currentLang().speech;
+    rec.interimResults = true;
+    let finalText = '';
+    rec.onresult = (e) => {
+      let interim = '';
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        if (e.results[i].isFinal) finalText += e.results[i][0].transcript;
+        else interim += e.results[i][0].transcript;
+      }
+      $('agentInput').value = (finalText + interim).trim();
+    };
+    rec.onerror = (e) => {
+      if (e.error === 'language-not-supported' || e.error === 'not-allowed') addAgentLine('kavach', t('noMic'), 'note');
+    };
+    rec.onend = () => {
+      recognizer = null;
+      $('mic').setAttribute('aria-pressed', 'false');
+      $('micLabel').textContent = t('micStart');
+      setAgentState('idle');
+      if (finalText.trim()) askAgent(finalText.trim());
+    };
+    $('mic').setAttribute('aria-pressed', 'true');
+    $('micLabel').textContent = t('micStop');
+    setAgentState('listening');
+    rec.start();
+  }
+
+  /* ---------- Agent conversation ---------- */
+  function addAgentLine(who, text, extraClass = '') {
+    const li = document.createElement('li');
+    li.className = `${who} ${extraClass}`.trim();
+    li.dir = 'auto';
+    const label = document.createElement('span');
+    label.className = 'who';
+    label.textContent = t(who);
+    li.append(label, text);
+    $('agentLog').append(li);
+    $('agentLog').scrollTop = $('agentLog').scrollHeight;
+    return li;
+  }
+
+  function typingBubble() {
+    const li = document.createElement('li');
+    li.className = 'kavach typing';
+    li.setAttribute('aria-label', t('state_thinking'));
+    li.append(...[0, 1, 2].map(() => document.createElement('span')));
+    $('agentLog').append(li);
+    $('agentLog').scrollTop = $('agentLog').scrollHeight;
+    return li;
+  }
+
+  async function askAgent(text) {
+    addAgentLine('you', text);
+    $('agentInput').value = '';
+    setAgentState('thinking');
+    const typing = typingBubble();
+    try {
+      const r = await api('/api/agent', { text, lang, turn: agentTurn++ });
+      typing.remove();
+      setMood(r.mood === 'safe' && r.mode === 'chat' ? 'idle' : r.mood);
+      addAgentLine('kavach', r.reply, r.mode === 'scan' ? `lvl-${r.mood}` : '');
+      if (r.analysis) renderResult(r.analysis, false);
+      if ($('autoSpeak').checked) await speak(r.reply);
+    } catch (err) {
+      typing.remove();
+      addAgentLine('kavach', err.message, 'note');
+    } finally {
+      if (kavach && !window.speechSynthesis?.speaking) setAgentState('idle');
+    }
+  }
+
+  /* ---------- Scam X-Ray ---------- */
   function fillList(ul, items) {
-    ul.replaceChildren(...items.map((text) => {
+    ul.replaceChildren(...items.map((text, i) => {
       const li = document.createElement('li');
       li.textContent = text;
+      li.style.animationDelay = `${i * 80}ms`;
       return li;
     }));
   }
 
-  function speak(text) {
-    if (!('speechSynthesis' in window) || !text) return;
-    window.speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = SPEECH_LANG[lang];
-    u.rate = 0.9;
-    window.speechSynthesis.speak(u);
+  function animateScore(to) {
+    const el = $('scoreText');
+    const gauge = $('gauge');
+    if (reducedMotion) { el.textContent = String(to); gauge.style.setProperty('--pct', String(to)); return; }
+    const start = performance.now();
+    const step = (now) => {
+      const k = Math.min(1, (now - start) / 900);
+      const v = Math.round(to * (1 - (1 - k) ** 3));
+      el.textContent = String(v);
+      gauge.style.setProperty('--pct', String(v));
+      if (k < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
   }
 
-  /* ---------- Scam X-Ray ---------- */
-  function renderResult(r) {
+  function renderResult(r, focus = true) {
     lastResult = r;
     const gauge = $('gauge');
     gauge.className = `gauge lvl-${r.level}`;
-    gauge.style.setProperty('--pct', String(r.score));
     gauge.setAttribute('aria-valuenow', String(r.score));
     gauge.setAttribute('aria-valuetext', `${t('score')} ${r.score} / 100 — ${t(`level_${r.level}`)}`);
-    $('scoreText').textContent = String(r.score);
+    animateScore(r.score);
     $('levelText').textContent = t(`level_${r.level}`);
     $('levelText').className = `level lvl-${r.level}`;
     $('verdict').textContent = r.verdict;
@@ -141,8 +254,7 @@
     fillList($('redFlags'), r.redFlags.length ? r.redFlags : ['—']);
     fillList($('nextSteps'), r.nextSteps);
 
-    const upiList = $('upiList');
-    upiList.replaceChildren(...r.upiChecks.map((u) => {
+    $('upiList').replaceChildren(...r.upiChecks.map((u) => {
       const li = document.createElement('li');
       li.className = u.verdict === 'validated-format' ? 'good' : 'bad';
       const strong = document.createElement('strong');
@@ -151,55 +263,40 @@
       return li;
     }));
     $('upiBlock').hidden = r.upiChecks.length === 0;
-
     $('complaintBlock').hidden = !r.complaint;
     $('complaint').value = r.complaint;
     const alertText = `⚠ Chat_Safe: ${r.verdict} (${r.score}/100, ${r.scamType}). Please call me before sending any money.`;
     $('familyAlert').href = `https://wa.me/?text=${encodeURIComponent(alertText)}`;
-
     $('engine').textContent = `Engine: ${r.engine}${r.aiError ? ` · ${r.aiError}` : ''}${r.cached ? ' · cached' : ''}`;
-    $('result').hidden = false;
-    $('verdict').focus();
+
+    const card = $('result');
+    card.className = `result lvl-${r.level}`;
+    card.hidden = false;
+    setMood(r.level);
+    if (focus) $('verdict').focus();
   }
 
   async function onAnalyze(event) {
     event.preventDefault();
     const text = $('message').value.trim();
     const status = $('xrayStatus');
-    if (!text) { setStatus(status, t('empty')); $('message').focus(); return; }
-    const btn = $('analyzeBtn');
-    btn.disabled = true;
-    setStatus(status, t('checking'));
+    if (!text) { status.textContent = t('empty'); $('message').focus(); return; }
+    $('analyzeBtn').disabled = true;
+    $('scanBox').classList.add('scanning');
+    setAgentState('thinking');
+    status.textContent = t('checking');
     try {
-      renderResult(await api('/api/analyze', { text, lang }));
-      setStatus(status, '');
+      const r = await api('/api/analyze', { text, lang });
+      renderResult(r);
+      status.textContent = '';
+      if ($('autoSpeak').checked) await speak(r.verdict);
     } catch (err) {
-      setStatus(status, err.message);
+      status.textContent = err.message;
     } finally {
-      btn.disabled = false;
+      $('analyzeBtn').disabled = false;
+      $('scanBox').classList.remove('scanning');
+      if (!window.speechSynthesis?.speaking) setAgentState('idle');
     }
-  }
-
-  function setupMic() {
-    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SR) return;
-    const btn = $('micBtn');
-    btn.hidden = false;
-    let rec = null;
-    btn.addEventListener('click', () => {
-      if (rec) { rec.stop(); return; }
-      rec = new SR();
-      rec.lang = SPEECH_LANG[lang];
-      rec.interimResults = false;
-      rec.onresult = (e) => {
-        const said = Array.from(e.results).map((x) => x[0].transcript).join(' ');
-        $('message').value = `${$('message').value} ${said}`.trim();
-      };
-      rec.onend = () => { rec = null; btn.setAttribute('aria-pressed', 'false'); setStatus($('xrayStatus'), ''); };
-      btn.setAttribute('aria-pressed', 'true');
-      setStatus($('xrayStatus'), t('listening'));
-      rec.start();
-    });
   }
 
   /* ---------- Pay-Check ---------- */
@@ -208,33 +305,32 @@
     const out = $('payResult');
     const upi = $('upi').value.trim();
     if (!upi) { $('upi').focus(); return; }
-    setStatus(out, t('checking'));
+    out.textContent = t('checking');
     try {
       const r = await api('/api/upi-check', { upi });
+      const good = r.verdict === 'validated-format';
       const box = document.createElement('div');
-      box.className = `result lvl-${r.verdict === 'validated-format' ? 'safe' : 'critical'}`;
-      const h = document.createElement('h2');
-      h.textContent = r.message;
+      box.className = `result lvl-${good ? 'safe' : 'critical'}`;
+      const h = document.createElement('h3');
+      h.textContent = `${good ? '✅' : '❌'} ${r.message}`;
       const p = document.createElement('p');
       p.textContent = r.advice;
       const a = document.createElement('a');
-      a.href = r.sebiCheckUrl;
-      a.target = '_blank';
-      a.rel = 'noopener noreferrer';
-      a.className = 'button secondary';
-      a.textContent = 'SEBI Check ↗';
+      Object.assign(a, { href: r.sebiCheckUrl, target: '_blank', rel: 'noopener noreferrer', className: 'button secondary', textContent: 'SEBI Check ↗' });
       box.append(h, p, a);
       out.replaceChildren(box);
-      speak(`${r.message} ${r.advice}`);
+      setMood(good ? 'safe' : 'critical');
+      if ($('autoSpeak').checked) speak(`${r.message} ${r.advice}`);
     } catch (err) {
-      setStatus(out, err.message);
+      out.textContent = err.message;
     }
   }
 
   /* ---------- Paati decoy ---------- */
-  function addChat(who, text) {
+  function addDecoyLine(who, text) {
     const li = document.createElement('li');
     li.className = who;
+    li.dir = 'auto';
     const label = document.createElement('span');
     label.className = 'who';
     label.textContent = t(who);
@@ -247,17 +343,17 @@
     const input = $('scammerMsg');
     const text = input.value.trim();
     if (!text) { input.focus(); return; }
-    addChat('them', text);
+    addDecoyLine('them', text);
     input.value = '';
     try {
       const r = await api('/api/decoy', { text, lang, turn: decoyTurn++ });
-      addChat('paati', r.reply);
+      addDecoyLine('paati', r.reply);
     } catch (err) {
-      addChat('paati', err.message);
+      addDecoyLine('paati', err.message);
     }
   }
 
-  /* ---------- Tabs (WAI-ARIA tabs pattern) ---------- */
+  /* ---------- Tabs (WAI-ARIA pattern) ---------- */
   function setupTabs() {
     const tabs = Array.from(document.querySelectorAll('[role="tab"]'));
     const select = (tab) => {
@@ -272,7 +368,8 @@
     tabs.forEach((tab, i) => {
       tab.addEventListener('click', () => select(tab));
       tab.addEventListener('keydown', (e) => {
-        const delta = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
+        const isRtl = document.documentElement.dir === 'rtl';
+        const delta = { ArrowRight: isRtl ? -1 : 1, ArrowLeft: isRtl ? 1 : -1 }[e.key];
         if (delta) { e.preventDefault(); select(tabs[(i + delta + tabs.length) % tabs.length]); }
         if (e.key === 'Home') { e.preventDefault(); select(tabs[0]); }
         if (e.key === 'End') { e.preventDefault(); select(tabs[tabs.length - 1]); }
@@ -280,20 +377,39 @@
     });
   }
 
-  /* ---------- wire up ---------- */
+  /* ---------- Wire up ---------- */
+  $('mic').addEventListener('click', toggleMic);
+  $('agentForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const text = $('agentInput').value.trim();
+    if (text) askAgent(text);
+    else $('agentInput').focus();
+  });
+  $('agentInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); $('agentForm').requestSubmit(); }
+  });
+  document.querySelectorAll('[data-ask]').forEach((b) => b.addEventListener('click', () => askAgent(t(b.dataset.ask))));
   $('xrayForm').addEventListener('submit', onAnalyze);
   $('payForm').addEventListener('submit', onPayCheck);
   $('paatiForm').addEventListener('submit', onPaati);
   $('lang').addEventListener('change', (e) => applyLanguage(e.target.value));
-  $('bigText').addEventListener('click', (e) => toggleSetting(e.currentTarget, 'big'));
-  $('contrast').addEventListener('click', (e) => toggleSetting(e.currentTarget, 'contrast'));
+  $('themeToggle').addEventListener('click', toggleTheme);
+  $('bigText').addEventListener('click', (e) => {
+    const on = document.body.classList.toggle('big');
+    e.currentTarget.setAttribute('aria-pressed', String(on));
+    store('big', on ? '1' : '');
+  });
+  $('autoSpeak').addEventListener('change', (e) => {
+    store('speak', e.target.checked ? '1' : '0');
+    if (!e.target.checked) window.speechSynthesis?.cancel();
+  });
   $('readAloud').addEventListener('click', () => {
-    if (lastResult) speak([lastResult.verdict, lastResult.explanation, ...lastResult.nextSteps].join('. '));
+    if (lastResult) speak([lastResult.verdict, lastResult.explanation, ...lastResult.nextSteps].filter(Boolean).join('. '));
   });
   $('copyComplaint').addEventListener('click', async () => {
     try {
       await navigator.clipboard.writeText($('complaint').value);
-      setStatus($('xrayStatus'), t('copied'));
+      $('xrayStatus').textContent = t('copied');
     } catch {
       $('complaint').select();
     }
@@ -301,14 +417,14 @@
   document.querySelectorAll('[data-sample]').forEach((b) =>
     b.addEventListener('click', () => { $('message').value = SAMPLES[b.dataset.sample]; $('message').focus(); }));
 
+  if (load('big')) { document.body.classList.add('big'); $('bigText').setAttribute('aria-pressed', 'true'); }
+  if (load('speak') === '0') $('autoSpeak').checked = false;
+  kavach.setDark(isDark());
+  setMood('idle');
   setupTabs();
-  setupMic();
-
-  try {
-    const saved = localStorage.getItem('chatsafe.lang');
-    if (saved) { $('lang').value = saved; applyLanguage(saved); }
-    for (const [cls, id] of [['big', 'bigText'], ['contrast', 'contrast']]) {
-      if (localStorage.getItem(`chatsafe.${cls}`)) toggleSetting($(id), cls);
-    }
-  } catch { /* storage may be blocked */ }
+  addAgentLine('kavach', I18N.en.agentIntro);
+  loadLanguages().then(() => {
+    $('agentLog').replaceChildren();
+    addAgentLine('kavach', t('agentIntro'));
+  });
 })();

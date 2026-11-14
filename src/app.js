@@ -8,7 +8,8 @@ const crypto = require('node:crypto');
 const { analyzeRules, combineScores, levelFor } = require('./rules');
 const { extractIndicators } = require('./extract');
 const { checkUpi } = require('./upiCheck');
-const { safeLang, VERDICT, STEPS, decoyFallback, buildComplaint } = require('./content');
+const { safeLang, localized, VERDICT, STEPS, decoyFallback, agentFallback, buildComplaint } = require('./content');
+const { LANGUAGES } = require('./languages');
 
 const PUBLIC_DIR = path.join(__dirname, '..', 'public');
 const MAX_BODY_BYTES = 16 * 1024;
@@ -175,11 +176,11 @@ function createHandler({ gemini, logger = console }) {
     const result = {
       score,
       level,
-      verdict: VERDICT[lang][level],
+      verdict: localized(VERDICT, lang)[level],
       scamType,
       explanation: ai?.explanation || '',
       redFlags: ai?.redFlags?.length ? ai.redFlags : [...rules.tactics, ...rules.categories].map((r) => r.label),
-      nextSteps: ai?.nextSteps?.length ? ai.nextSteps : STEPS[lang],
+      nextSteps: ai?.nextSteps?.length ? ai.nextSteps : localized(STEPS, lang),
       engine: ai ? `rules + ${gemini.model}` : 'rules (offline)',
       aiError,
       rules,
@@ -206,8 +207,47 @@ function createHandler({ gemini, logger = console }) {
     return { reply: reply || decoyFallback(lang, turn), engine: reply ? gemini.model : 'offline script' };
   }
 
+  /**
+   * Voice agent: if the user's words look like a scam, scan them and speak the verdict;
+   * otherwise answer as a cyber-safety assistant.
+   */
+  async function agent(body) {
+    const text = requireText(body.text);
+    const lang = safeLang(body.lang);
+    const turn = Number.isInteger(body.turn) ? body.turn : 0;
+    const quick = analyzeRules(text);
+
+    if (quick.score >= 30) {
+      const analysis = await analyze({ text, lang });
+      const tactic = analysis.redFlags[0] ? ` ${analysis.redFlags[0]}.` : '';
+      return {
+        mode: 'scan',
+        mood: analysis.level,
+        reply: `${analysis.verdict}${tactic} ${analysis.nextSteps[0] || ''}`.trim(),
+        analysis,
+      };
+    }
+
+    let reply = null;
+    if (gemini.enabled) {
+      try {
+        reply = await gemini.agentReply(text, lang);
+      } catch (err) {
+        logger.error('[gemini agent]', err instanceof Error ? err.message : err);
+      }
+    }
+    return {
+      mode: 'chat',
+      mood: 'safe',
+      reply: reply || agentFallback(lang, turn, text),
+      engine: reply ? gemini.model : 'offline script',
+    };
+  }
+
   const routes = {
     'GET /api/health': async () => ({ ok: true, ai: gemini.enabled }),
+    'GET /api/languages': async () => ({ languages: LANGUAGES }),
+    'POST /api/agent': agent,
     'POST /api/analyze': analyze,
     'POST /api/decoy': decoy,
     'POST /api/upi-check': async (body) => {
