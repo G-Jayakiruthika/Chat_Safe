@@ -8,7 +8,8 @@ window.CHATSAFE_I18N = Object.freeze({
   en: {
     navApp: 'Kavach',
     navConnect: 'Connect apps',
-    dragHint: 'Drag to spin · tap to poke',
+    dragHint: 'Drag to spin · tap to poke · wheel to zoom',
+    resetView: '↺ Reset view',
     learned: 'Scam types learned',
     newChat: '＋ New chat',
     demo: '▶ Guided demo',
@@ -99,7 +100,8 @@ window.CHATSAFE_I18N = Object.freeze({
   ta: {
     navApp: 'கவச்',
     navConnect: 'ஆப்களை இணை',
-    dragHint: 'சுழற்ற இழுக்கவும் · தொடவும்',
+    dragHint: 'சுழற்ற இழுக்கவும் · தொடவும் · ஜூம் செய்ய ஸ்க்ரோல்',
+    resetView: '↺ மீட்டமை',
     learned: 'கற்ற மோசடி வகைகள்',
     newChat: '＋ புதிய உரையாடல்',
     demo: '▶ வழிகாட்டும் டெமோ',
@@ -176,7 +178,8 @@ window.CHATSAFE_I18N = Object.freeze({
   hi: {
     navApp: 'कवच',
     navConnect: 'ऐप्स जोड़ें',
-    dragHint: 'घुमाने के लिए खींचें · छूएं',
+    dragHint: 'घुमाने के लिए खींचें · छूएं · ज़ूम के लिए स्क्रॉल',
+    resetView: '↺ रीसेट करें',
     learned: 'सीखे गए स्कैम प्रकार',
     newChat: '＋ नई चैट',
     demo: '▶ गाइडेड डेमो',

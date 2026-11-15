@@ -51,6 +51,63 @@
     k.setDark(isDark());
   });
 
+  /* ---------- Product demonstration: steps advance on scroll ---------- */
+  (() => {
+    const section = $('how');
+    if (!section) return;
+    const pills = Array.from(section.querySelectorAll('.step-pill'));
+    const screens = Array.from(section.querySelectorAll('.ps'));
+    const chips = Array.from(section.querySelectorAll('[class*="chip-"]'));
+    const COPY = [
+      ['Tell Kavach', 'Speak, paste or forward the call script, WhatsApp message or payment request — from the app, Telegram, WhatsApp Business or Instagram.'],
+      ['X-Ray the scam', 'Offline rules for 8 Indian scam types and 7 pressure tactics, plus Google Gemini and the SEBI @valid UPI check, fused into one 0–100 risk score.'],
+      ['Act in time', 'Hear the verdict in your language, alert your family on WhatsApp, and file a ready-made 1930 complaint with the scammer\'s UPI IDs and numbers.'],
+    ];
+    const CHIPS = [[2], [0, 1, 3], [1, 3]]; // which glass chips belong to each step
+    let step = -1;
+    let timer = null;
+
+    function show(next) {
+      if (next === step) return;
+      step = next;
+      pills.forEach((p, i) => {
+        const on = i === step;
+        p.setAttribute('aria-current', String(on));
+        p.querySelector('.n').textContent = on ? `Step 0${i + 1}` : `0${i + 1}`;
+      });
+      screens.forEach((el, i) => el.classList.toggle('on', i === step));
+      chips.forEach((c, i) => c.classList.toggle('chip-on', CHIPS[step].includes(i)));
+      section.querySelector('.demo-title').textContent = COPY[step][0];
+      section.querySelector('.demo-text').textContent = COPY[step][1];
+    }
+
+    function autoplay() {
+      clearInterval(timer);
+      timer = setInterval(() => show((step + 1) % pills.length), 3200);
+    }
+
+    pills.forEach((p, i) =>
+      p.addEventListener('click', () => {
+        show(i);
+        clearInterval(timer); // the visitor is driving now
+      }),
+    );
+
+    // Run only while the section is on screen.
+    new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) {
+          show(Math.max(0, step));
+          if (!reducedMotion) autoplay();
+        } else {
+          clearInterval(timer);
+        }
+      },
+      { threshold: 0.4 },
+    ).observe(section);
+    show(0);
+  })();
+
   /* ---------- Theme ---------- */
   $('themeToggle').addEventListener('click', () => {
     const next = isDark() ? 'light' : 'dark';

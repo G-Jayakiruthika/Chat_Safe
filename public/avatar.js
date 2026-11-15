@@ -23,14 +23,14 @@
 
   /** Eye expression parameters. lid* are 0..1 of the eye height covered from the top. */
   const EXPRESSIONS = Object.freeze({
-    calm: { open: 1, lidOuter: 0.05, lidInner: 0.05, smile: 0, pupil: 0.3 },
-    happy: { open: 1.05, lidOuter: 0.08, lidInner: 0.08, smile: 0.72, pupil: 0.3 },
-    squint: { open: 0.85, lidOuter: 0.42, lidInner: 0.38, smile: 0, pupil: 0.27 },
-    angry: { open: 1, lidOuter: 0.05, lidInner: 0.5, smile: 0.12, pupil: 0.22 },
-    furious: { open: 1.05, lidOuter: 0.0, lidInner: 0.62, smile: 0.18, pupil: 0.14 },
-    wide: { open: 1.25, lidOuter: 0, lidInner: 0, smile: 0, pupil: 0.36 },
-    thinking: { open: 0.95, lidOuter: 0.22, lidInner: 0.22, smile: 0, pupil: 0.26 },
-    surprised: { open: 1.35, lidOuter: 0, lidInner: 0, smile: 0, pupil: 0.16 },
+    calm: { open: 1, lidOuter: 0.05, lidInner: 0.05, smile: 0, pupil: 0.3, brow: 0, browAngle: 0, browSkew: 0 },
+    happy: { open: 1.05, lidOuter: 0.08, lidInner: 0.08, smile: 0.72, pupil: 0.3, brow: -0.22, browAngle: -0.14, browSkew: 0 },
+    squint: { open: 0.85, lidOuter: 0.42, lidInner: 0.38, smile: 0, pupil: 0.27, brow: 0.16, browAngle: 0.16, browSkew: 0.42 },
+    angry: { open: 1, lidOuter: 0.05, lidInner: 0.5, smile: 0.12, pupil: 0.22, brow: 0.1, browAngle: 0.44, browSkew: 0 },
+    furious: { open: 1.05, lidOuter: 0, lidInner: 0.62, smile: 0.18, pupil: 0.14, brow: 0.16, browAngle: 0.62, browSkew: 0 },
+    wide: { open: 1.25, lidOuter: 0, lidInner: 0, smile: 0, pupil: 0.36, brow: -0.42, browAngle: -0.06, browSkew: 0 },
+    thinking: { open: 0.95, lidOuter: 0.22, lidInner: 0.22, smile: 0, pupil: 0.26, brow: -0.16, browAngle: 0.12, browSkew: 0.3 },
+    surprised: { open: 1.35, lidOuter: 0, lidInner: 0, smile: 0, pupil: 0.16, brow: -0.55, browAngle: -0.12, browSkew: 0 },
   });
   const MOOD_EXPRESSION = { idle: 'calm', safe: 'happy', suspicious: 'squint', high: 'angry', critical: 'furious' };
 
@@ -133,6 +133,8 @@
     let surpriseUntil = 0;
     let dark = true;
     let visible = true;
+    let zoom = 1;
+    let zoomTarget = 1;
     let last = performance.now();
 
     function resize() {
@@ -175,6 +177,19 @@
       surpriseUntil = performance.now() + 700;
       spinVel += 6;
       opts.onPoke?.();
+    }
+
+    /** @param {number} factor multiplied into the zoom, clamped to a sane range */
+    function zoomBy(factor) {
+      zoomTarget = Math.max(0.65, Math.min(1.9, zoomTarget * factor));
+    }
+
+    /** Back to the starting view: default zoom, no tilt, no spin momentum. */
+    function resetView() {
+      zoomTarget = 1;
+      spinVel = 0;
+      spin = 0;
+      pointer = { x: 0, y: 0 };
     }
 
     /** Pick the eye expression for the current state/mood. */
@@ -265,6 +280,26 @@
       ctx.stroke();
     }
 
+    /**
+     * One eyebrow: a thick rounded bar above the eye. Its tilt carries most of the
+     * emotion — inner end down reads angry, inner end up reads friendly or worried.
+     * @param {number} side -1 left, 1 right
+     */
+    function drawBrow(ex, ey, ew, eh, side) {
+      const skew = side === -1 ? expr.browSkew : 0; // one brow lifts for a sceptical look
+      const y = ey - eh * (1.55 + skew * 0.5) + eh * expr.brow;
+      const angle = (expr.browAngle + skew * -0.5) * side;
+      const bw = ew * 2.25;
+      const bh = Math.max(2.5, eh * 0.3);
+      ctx.save();
+      ctx.translate(ex, y);
+      ctx.rotate(angle);
+      ctx.fillStyle = rgba(color, 0.92);
+      roundRect(ctx, -bw / 2, -bh / 2, bw, bh, bh / 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
     /** Visor (face plate) with eyes and the speaking mouth. */
     function drawFace(vx, vy, vw, vh, time) {
       const visorFill = dark ? 'rgb(5,12,26)' : 'rgb(12,24,44)';
@@ -286,7 +321,10 @@
       const eh = vh * 0.24;
       ctx.shadowColor = rgba(color, 1);
       ctx.shadowBlur = 12;
-      for (const side of [-1, 1]) drawEye(side * vw * 0.21, -vh * 0.07, ew, eh, side, look, time, visorFill);
+      for (const side of [-1, 1]) {
+        drawEye(side * vw * 0.21, -vh * 0.02, ew, eh, side, look, time, visorFill);
+        drawBrow(side * vw * 0.21, -vh * 0.02, ew, eh, side);
+      }
       ctx.shadowBlur = 0;
 
       // Mouth: equaliser bars driven by speech
@@ -330,6 +368,7 @@
       const baseSpin = { idle: 0.25, listening: 0.45, thinking: 2.2, speaking: 0.5 }[state] * speed;
       spinVel *= Math.pow(0.04, dt); // inertia decays
       spin += dt * (baseSpin + spinVel);
+      zoom += (zoomTarget - zoom) * Math.min(1, dt * 6);
 
       nextBlink -= dt;
       if (nextBlink <= 0) {
@@ -342,14 +381,14 @@
       const shake = !reduced && now < alertUntil ? Math.sin(time * 60) * 3 : 0;
 
       if (mini) {
-        const vw = w * 0.86;
+        const vw = w * 0.86 * zoom;
         drawFace(w / 2 + shake, h / 2, vw, vw * 0.6, time);
         return;
       }
 
       const cx = w / 2 + shake;
       const cy = h / 2 + (reduced ? 0 : Math.sin(time * 1.3) * 4);
-      const R = Math.min(w, h) * 0.3;
+      const R = Math.min(w, h) * 0.3 * zoom;
       const persp = 3.2;
 
       const halo = ctx.createRadialGradient(cx, cy, R * 0.2, cx, cy, R * 1.8);
@@ -411,10 +450,29 @@
     if (!mini) {
       canvas.addEventListener('pointerdown', onPointerDown);
       window.addEventListener('pointerup', onPointerUp);
+      canvas.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        zoomBy(e.deltaY < 0 ? 1.12 : 1 / 1.12);
+      }, { passive: false });
+      // Keyboard control, so the avatar is usable without a mouse (Cybear-style).
       canvas.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
+        const keys = {
+          Enter: poke,
+          ' ': poke,
+          ArrowLeft: () => { spinVel -= 4; },
+          ArrowRight: () => { spinVel += 4; },
+          ArrowUp: () => zoomBy(1.12),
+          ArrowDown: () => zoomBy(1 / 1.12),
+          '+': () => zoomBy(1.15),
+          '=': () => zoomBy(1.15),
+          '-': () => zoomBy(1 / 1.15),
+          r: resetView,
+          R: resetView,
+        };
+        const fn = keys[e.key];
+        if (fn) {
           e.preventDefault();
-          poke();
+          fn();
         }
       });
     }
@@ -438,6 +496,8 @@
         mouthTarget = 0.9;
       },
       poke,
+      zoomBy,
+      resetView,
       /** @param {boolean} isDark */
       setDark(isDark) {
         dark = isDark;

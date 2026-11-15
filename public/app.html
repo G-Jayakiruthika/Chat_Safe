@@ -48,7 +48,8 @@
     <section class="hero glass reveal" aria-labelledby="agentTitle">
       <div class="avatar-wrap">
         <canvas id="kavach" class="avatar" role="img" tabindex="0" aria-label="Kavach, the Chat_Safe 3D cyber guardian. Drag to spin, press Enter to poke."></canvas>
-        <p class="hint" data-i18n="dragHint">Drag to spin · tap to poke</p>
+        <p class="hint" data-i18n="dragHint">Drag to spin · tap to poke · wheel to zoom</p>
+        <button type="button" id="resetView" class="linkbtn" data-i18n="resetView">↺ Reset view</button>
         <p id="agentState" class="state-pill" role="status" aria-live="polite" data-i18n="state_idle">Ready to help</p>
         <button type="button" id="mic" class="mic" aria-pressed="false">
           <span class="mic-icon" aria-hidden="true">🎙️</span>
@@ -77,6 +78,7 @@
           <button type="button" class="chip" data-ask="chipArrest" data-i18n="chipArrest">What is a digital arrest?</button>
           <button type="button" class="chip" data-ask="chipLost" data-i18n="chipLost">I sent money to a scammer. What now?</button>
         </div>
+        <div id="caseStrip" class="case-strip" role="group" aria-label="Recent chats" hidden></div>
         <form id="agentForm" class="ask" novalidate>
           <label for="agentInput" class="sr-only" data-i18n="typeHere">Or type your question / paste a message</label>
           <textarea id="agentInput" rows="2" maxlength="4000" dir="auto" data-i18n-placeholder="typeHere"></textarea>
@@ -174,14 +176,22 @@
     </section>
   </main>
 
+  <div id="searchBar" class="searchbar" hidden>
+    <form id="searchForm" role="search">
+      <label for="caseSearch" class="sr-only" data-i18n="searchCases">Search saved chats</label>
+      <input id="caseSearch" type="search" autocomplete="off" data-i18n-placeholder="searchCases" placeholder="Search saved chats">
+      <button type="submit" class="icon-btn" aria-label="Search">🔍</button>
+      <button type="button" id="closeSearch" class="icon-btn" aria-label="Close search">✕</button>
+    </form>
+  </div>
+
   <aside id="cases" class="drawer" aria-labelledby="casesTitle" hidden>
     <div class="marquee" aria-hidden="true"><span>CASE FILES · STORED ON THIS DEVICE ONLY · SEARCH ANY WORD · CASE FILES · STORED ON THIS DEVICE ONLY · SEARCH ANY WORD ·&nbsp;</span><span>CASE FILES · STORED ON THIS DEVICE ONLY · SEARCH ANY WORD · CASE FILES · STORED ON THIS DEVICE ONLY · SEARCH ANY WORD ·&nbsp;</span></div>
     <div class="drawer-head">
       <h2 id="casesTitle" data-i18n="cases">Case files</h2>
       <button type="button" id="closeCases" class="icon-btn" aria-label="Close case files">✕</button>
     </div>
-    <label for="caseSearch" class="sr-only" data-i18n="searchCases">Search saved chats</label>
-    <input id="caseSearch" type="search" autocomplete="off" data-i18n-placeholder="searchCases" placeholder="Search saved chats">
+    <button type="button" id="openSearch" class="secondary wide" data-i18n="searchCases">🔍 Search saved chats</button>
     <p id="caseCount" class="muted small" role="status" aria-live="polite"></p>
     <ul id="caseList" class="case-list"></ul>
     <div class="actions">
@@ -198,6 +208,7 @@
       <dt><kbd>/</kbd></dt><dd>Type to Kavach</dd>
       <dt><kbd>S</kbd></dt><dd>Kavach tells a safety tip</dd>
       <dt><kbd>H</kbd></dt><dd>Open case files (saved chats)</dd>
+      <dt><kbd>F</kbd></dt><dd>Search saved chats</dd>
       <dt><kbd>N</kbd></dt><dd>New chat</dd>
       <dt><kbd>T</kbd></dt><dd>Light / dark theme</dd>
       <dt><kbd>D</kbd></dt><dd>Play the guided demo</dd>

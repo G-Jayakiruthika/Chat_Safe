@@ -116,3 +116,73 @@ body.landing { background: #07080c; }
 
 /* A lone CTA inside a flex-column stage must not stretch across the row */
 .stage > .button { align-self: flex-start; }
+
+/* ---------- Scroll-driven product demonstration (Autopilot-style) ---------- */
+.demo-stage { max-width: 1100px; }
+.demo-wrap {
+  display: grid; grid-template-columns: auto 1fr; grid-template-areas: "rail visual" "copy copy";
+  gap: 1.25rem 1.5rem; align-items: center; margin: 1rem 0 2rem;
+}
+.step-rail { grid-area: rail; list-style: none; margin: 0; padding: 0; display: grid; gap: .6rem; }
+.step-pill {
+  min-height: 44px; width: 44px; padding: 0; border-radius: 999px; border: 1px solid var(--border);
+  background: var(--glass); color: var(--muted); font: 700 .78rem ui-monospace, Consolas, monospace;
+  letter-spacing: .08em; overflow: hidden; white-space: nowrap; transition: width .45s cubic-bezier(.2,.8,.2,1), background .3s, color .3s;
+}
+.step-pill[aria-current="true"] { width: 108px; background: var(--ink); color: var(--bg); border-color: transparent; }
+
+.demo-stage-visual { grid-area: visual; position: relative; display: grid; place-items: center; min-height: 420px; }
+.phone-3d {
+  width: 215px; height: 420px; border-radius: 34px; padding: 11px;
+  background: linear-gradient(160deg, #23303f, #0d1521); border: 1px solid var(--border);
+  box-shadow: 0 30px 70px rgb(0 0 0 / .55), inset 0 1px 0 rgb(255 255 255 / .12);
+  transform: perspective(1200px) rotateY(-13deg) rotateX(4deg);
+}
+.phone-screen { position: relative; height: 100%; border-radius: 24px; background: #070b14; overflow: hidden; }
+.ps {
+  position: absolute; inset: 0; padding: 1rem .85rem; display: flex; flex-direction: column; gap: .55rem;
+  opacity: 0; transform: translateY(14px); transition: opacity .5s, transform .5s; color: #e6f1ff;
+}
+.ps.on { opacity: 1; transform: none; }
+.ps-head { margin: 0; font: 700 .72rem ui-monospace, Consolas, monospace; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
+.ps-line { margin: 0; font-size: .78rem; padding: .4rem .5rem; border-radius: 9px; background: rgb(34 211 238 / .12); }
+.ps-line.bad { background: rgb(248 113 113 / .2); color: #f87171; font-weight: 700; }
+.ps-line.ok { background: rgb(52 211 153 / .16); color: #34d399; }
+.ps-gauge {
+  align-self: center; width: 92px; height: 92px; border-radius: 50%; display: grid; place-items: center; position: relative;
+  font: 800 1.7rem ui-monospace, Consolas, monospace; color: #f87171; isolation: isolate;
+  background: conic-gradient(#f87171 92%, rgb(127 127 127 / .2) 0);
+}
+.ps-gauge::before { content: ""; position: absolute; inset: 9px; border-radius: 50%; background: #070b14; z-index: -1; }
+.wave { display: flex; gap: 3px; align-items: center; justify-content: center; height: 46px; }
+.wave i { width: 4px; border-radius: 2px; background: var(--accent); animation: bars 1s ease-in-out infinite; }
+.wave i:nth-child(1) { height: 30%; animation-delay: 0s }   .wave i:nth-child(2) { height: 60%; animation-delay: .1s }
+.wave i:nth-child(3) { height: 90%; animation-delay: .2s }  .wave i:nth-child(4) { height: 50%; animation-delay: .3s }
+.wave i:nth-child(5) { height: 80%; animation-delay: .4s }  .wave i:nth-child(6) { height: 40%; animation-delay: .5s }
+.wave i:nth-child(7) { height: 65%; animation-delay: .6s }
+@keyframes bars { 50% { transform: scaleY(.4); } }
+
+/* Glass chips floating off the phone */
+.chip-a, .chip-b, .chip-c, .chip-d {
+  position: absolute; display: grid; gap: .1rem; padding: .5rem .7rem; border-radius: 13px;
+  background: rgb(255 255 255 / .07); backdrop-filter: blur(9px); border: 1px solid rgb(255 255 255 / .16);
+  box-shadow: 0 10px 30px rgb(0 0 0 / .4); opacity: 0; transform: translateY(12px) scale(.94);
+  transition: opacity .5s, transform .5s; animation: float 7s ease-in-out infinite;
+}
+.chip-a b, .chip-b b, .chip-c b, .chip-d b { font-size: .8rem; }
+.chip-a span, .chip-b span, .chip-c span, .chip-d span { font-size: .68rem; color: var(--muted); }
+.chip-a { top: 6%; left: 2%; }  .chip-b { top: 34%; right: 0; animation-delay: -2s; }
+.chip-c { bottom: 16%; left: 0; animation-delay: -4s; }  .chip-d { bottom: 4%; right: 6%; animation-delay: -1s; }
+.chip-on { opacity: 1; transform: none; }
+
+.demo-copy { grid-area: copy; max-width: 560px; }
+.demo-title { font-size: clamp(1.6rem, 3.4vw, 2.4rem); margin: 0 0 .35rem; }
+.demo-text { color: var(--muted); margin: 0; }
+
+@media (min-width: 900px) {
+  .demo-wrap { grid-template-columns: auto 1fr 1fr; grid-template-areas: "rail visual copy"; }
+  .demo-copy { max-width: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .chip-a, .chip-b, .chip-c, .chip-d { animation: none; }
+}

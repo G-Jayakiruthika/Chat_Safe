@@ -327,6 +327,34 @@
       items.push(li);
     }
     $('caseList').replaceChildren(...items);
+    renderStrip();
+  }
+
+  /** A short, tappable row of recent chats under the conversation (Yaas-style picker). */
+  function renderStrip() {
+    const recent = caseStore.search('').slice(0, 8);
+    const strip = $('caseStrip');
+    strip.hidden = recent.length === 0;
+    strip.replaceChildren(...recent.map(({ case: c }) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'case-chip';
+      if (c.id === caseStore.currentId) b.setAttribute('aria-current', 'true');
+      const dot = document.createElement('span');
+      dot.className = `dot lvl-${c.mood}`;
+      dot.setAttribute('aria-hidden', 'true');
+      const t = document.createElement('span');
+      t.className = 't';
+      t.dir = 'auto';
+      t.textContent = c.title;
+      const d = document.createElement('span');
+      d.className = 'd';
+      d.textContent = window.dayLabel(c.updated);
+      b.append(t, d);
+      b.prepend(dot);
+      b.addEventListener('click', () => openCase(c.id));
+      return b;
+    }));
   }
 
   function openCase(id) {
@@ -337,6 +365,7 @@
     setMood(c.mood);
     renderCases();
     toggleCases(false);
+    closeSearch();
   }
 
   function toggleCases(force) {
@@ -348,6 +377,18 @@
       renderCases();
       $('caseSearch').focus();
     }
+  }
+
+  function openSearch() {
+    $('searchBar').hidden = false;
+    document.body.classList.add('searching');
+    $('caseSearch').focus();
+    $('caseSearch').select();
+  }
+
+  function closeSearch() {
+    $('searchBar').hidden = true;
+    document.body.classList.remove('searching');
   }
 
   function exportCases() {
@@ -519,6 +560,7 @@
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       window.speechSynthesis?.cancel();
+      if (!$('searchBar').hidden) { closeSearch(); return; }
       if (!$('cases').hidden) { toggleCases(false); $('historyBtn').focus(); }
       return;
     }
@@ -529,6 +571,7 @@
       '/': () => $('agentInput').focus(),
       s: sayTip,
       h: () => toggleCases(),
+      f: openSearch,
       n: newChat,
       t: toggleTheme,
       d: () => window.ChatSafeDemo?.start(),
@@ -539,6 +582,7 @@
   });
 
   /* ---------- Wire up ---------- */
+  $('resetView').addEventListener('click', () => { kavach.resetView(); Sound.play('blip'); });
   $('mic').addEventListener('click', toggleMic);
   $('agentForm').addEventListener('submit', (e) => {
     e.preventDefault();
@@ -571,6 +615,9 @@
   $('historyBtn').addEventListener('click', () => toggleCases());
   $('closeCases').addEventListener('click', () => { toggleCases(false); $('historyBtn').focus(); });
   $('caseSearch').addEventListener('input', renderCases);
+  $('searchForm').addEventListener('submit', (e) => { e.preventDefault(); toggleCases(true); });
+  $('openSearch').addEventListener('click', openSearch);
+  $('closeSearch').addEventListener('click', () => { closeSearch(); $('openSearch').focus(); });
   $('exportCases').addEventListener('click', exportCases);
   $('clearCases').addEventListener('click', () => {
     if (window.confirm(t('confirmClear'))) { caseStore.clear(); newChat(); }

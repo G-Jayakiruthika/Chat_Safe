@@ -13,8 +13,8 @@ The same detection engine runs inside the browser, so judges can open the link a
 | Landing — scroll-driven 3D | Scroll morph: globe → attack → shield | Kavach reacts to a scam |
 |---|---|---|
 | ![](docs/landing.jpg) | ![](docs/scroll-morph.jpg) | ![](docs/kavach.jpg) |
-| **Scam X-Ray result + 1930 draft** | **Case files: saved chats + search** | **Guided demo for judges** |
-| ![](docs/scan.jpg) | ![](docs/case-files.jpg) | ![](docs/demo.jpg) |
+| **Scam X-Ray result + 1930 draft** | **Case files: search with highlights** | **Scroll-driven demonstration** |
+| ![](docs/scan.jpg) | ![](docs/case-files.jpg) | ![](docs/demo-steps.jpg) |
 
 **Kavach's eyes change with the threat level — readable without any text:**
 
@@ -40,10 +40,12 @@ The same detection engine runs inside the browser, so judges can open the link a
 | 4 | **Kamala Paati decoy** | `app.html` → *Paati decoy* | An AI grandma who wastes scammers' time and never shares real data (inspired by Virgin Media O2's *dAIsy*). |
 | 5 | **1930 complaint draft** | after any risky scan | Auto-extracts the scammer's UPI IDs, phone numbers, bank accounts, IFSC codes, amounts and links into a ready-to-paste complaint. |
 | 6 | **Family alert** | after any risky scan | One tap sends a WhatsApp warning to a relative. |
-| 7 | **Case files** | `app.html` → 🗂️ | Every chat saved **on the device only**. Search any word with highlighted matches, grouped by Today / Yesterday / date. Export or delete. |
+| 7 | **Case files** | `app.html` → 🗂️ / `F` | Every chat saved **on the device only**. A full-width search overlay highlights matches; results group by Today / Yesterday / date, and a strip of recent chats sits under the conversation. Export or delete. |
 | 8 | **Chat-app connectors** | `connect.html` | Telegram bot, WhatsApp Business, Instagram DM, Messenger, plus the Android share sheet. |
 | 9 | **Guided demo** | `app.html?demo=1` or `D` | A self-playing 9-step tour with spotlight, captions, progress bar and Pause / Next / Exit. |
 | 10 | **Learning HUD** | `app.html` | "Scam types learned 0/8" unlocks as you meet each scam, with a sound and a toast. |
+| 11 | **Scroll-driven demonstration** | `index.html` → *How it works* | A pinned phone mock whose screen advances through the three steps, with step pills and glass chips lifting off it. |
+| 12 | **Flowing data ribbons** | `index.html` | Streams of light behind the content that react to each section: calm waves, a disturbed red stream at the attack, a dome at the shield, ordered lanes at the lock. |
 | ★ | **Works offline / zero-install** | everywhere | The same engine is bundled to `core.js` and runs fully in the browser when there is no server or API key. |
 
 ### Accessibility and privacy
@@ -132,8 +134,9 @@ sequenceDiagram
 2. Each frame it **rotates** every vertex with Y/X rotation matrices and applies **perspective projection** (`scale = d / (d − z)`); edges closer to the viewer are drawn brighter (depth shading).
 3. A tilted **ring of 72 particles** orbits the head, and the **visor face** follows your pointer.
 4. **Eyes are drawn as a shaped clip region**: a glowing sclera, a pupil that tracks the pointer, and an upper eyelid whose inner and outer ends drop *independently* — that one trick produces calm, happy, squinting, angry and furious expressions.
-5. **States**: idle · listening (wide eyes, sonar rings) · thinking (eyes look up, scan line) · speaking (7-bar mouth equaliser driven by `SpeechSynthesisUtterance.onboundary`).
-6. **Interaction**: drag to spin with inertia, tap or press Enter to poke (surprised eyes + a tip), and it pauses drawing when scrolled off-screen.
+5. **Eyebrows carry the emotion.** Each brow is a thick bar whose *tilt* and *height* are animated per mood — inner end down reads angry, raised and arched reads friendly, and one brow lifted alone reads sceptical. This is what makes safe-versus-scam readable at a glance without any text.
+6. **States**: idle · listening (wide eyes, sonar rings) · thinking (eyes look up, scan line) · speaking (7-bar mouth equaliser driven by `SpeechSynthesisUtterance.onboundary`).
+7. **Interaction**: drag to spin with inertia, tap or Enter to poke (surprised eyes + a safety tip), scroll wheel or `+`/`-` to zoom, arrow keys to turn, `R` to reset the view. Drawing pauses when the avatar is scrolled off-screen.
 
 ### 3.5 Scroll-driven background (`public/morph.js`)
 
@@ -305,7 +308,9 @@ Chat_Safe/
 
 ## 10. Acknowledgements
 
-SEBI (Validated UPI Handles & SEBI Check), I4C / National Cyber Crime Reporting Portal (1930), DoT Sanchar Saathi (Chakshu), Google Gemini API, Google Cloud Run, Meta Graph API, Telegram Bot API, Web Speech API. The decoy idea was inspired by Virgin Media O2's *dAIsy* and Apate.ai. No third-party code, fonts or datasets are bundled — every visual is generated in code.
+SEBI (Validated UPI Handles & SEBI Check), I4C / National Cyber Crime Reporting Portal (1930), DoT Sanchar Saathi (Chakshu), Google Gemini API, Google Cloud Run, Meta Graph API, Telegram Bot API, Web Speech API. The decoy idea was inspired by Virgin Media O2's *dAIsy* and Apate.ai.
+
+**Design references.** The interface takes cues from sites I studied rather than copied: scroll-driven light ribbons and the corner HUD from *aengel.io*; the pinned step-by-step product demonstration from *launch.joinautopilot.com*; the playable mascot (drag, poke, zoom, keyboard shortcuts, progress counter) from *cybear.it*; the full-width search overlay from *henrietta.wearetattoodigital.com* and the pick-a-card strip from *yaas-energy.com*; and the heavy-lidded, eyebrow-driven character eyes from *awards.racing*. No third-party code, fonts, images or datasets are bundled — every visual here is generated in code.
 
 ## 11. Roadmap
 

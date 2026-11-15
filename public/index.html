@@ -84,26 +84,52 @@
       <p class="muted small">Figures: I4C / National Cyber Crime Reporting Portal data for 2025, as reported in the press.</p>
     </section>
 
-    <section id="how" class="stage" data-shape="shield" aria-labelledby="howTitle">
+    <!-- Scroll-driven product demonstration: pinned phone + step pills (Autopilot-style) -->
+    <section id="how" class="stage demo-stage" data-shape="shield" aria-labelledby="howTitle">
       <p class="eyebrow">02 // HOW IT WORKS</p>
       <h2 id="howTitle" class="big-title">Three steps. Under three seconds.</h2>
-      <ol class="steps">
-        <li class="step reveal-on-scroll">
-          <span class="step-n mono">STEP 01</span>
-          <h3>Tell Kavach</h3>
-          <p>Speak, paste, or forward the call script, WhatsApp message or payment request — from the app, Telegram, WhatsApp Business or Instagram.</p>
-        </li>
-        <li class="step reveal-on-scroll">
-          <span class="step-n mono">STEP 02</span>
-          <h3>X-Ray the scam</h3>
-          <p>Offline rules for 8 Indian scam types and 7 pressure tactics + Google Gemini + the SEBI <code>@valid</code> UPI check, fused into one 0–100 risk score.</p>
-        </li>
-        <li class="step reveal-on-scroll">
-          <span class="step-n mono">STEP 03</span>
-          <h3>Act in time</h3>
-          <p>Hear the verdict in your language, alert your family on WhatsApp, and file a ready-made 1930 complaint with the scammer's UPI IDs and numbers.</p>
-        </li>
-      </ol>
+
+      <div class="demo-wrap">
+        <ol class="step-rail" aria-label="Steps">
+          <li><button type="button" class="step-pill" data-step="0" aria-current="true"><span class="n">Step 01</span></button></li>
+          <li><button type="button" class="step-pill" data-step="1"><span class="n">02</span></button></li>
+          <li><button type="button" class="step-pill" data-step="2"><span class="n">03</span></button></li>
+        </ol>
+
+        <div class="demo-stage-visual">
+          <div class="phone-3d">
+            <div class="phone-screen">
+              <div class="ps ps-0">
+                <p class="ps-head">🎙️ Listening…</p>
+                <div class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+                <p class="ps-line">"CBI officer says I am under digital arrest…"</p>
+              </div>
+              <div class="ps ps-1">
+                <p class="ps-head">Scanning</p>
+                <div class="ps-gauge">92</div>
+                <p class="ps-line bad">DANGER — almost certainly a scam</p>
+              </div>
+              <div class="ps ps-2">
+                <p class="ps-head">Ready to act</p>
+                <p class="ps-line ok">📝 1930 complaint drafted</p>
+                <p class="ps-line ok">👨‍👩‍👧 Family alerted</p>
+                <p class="ps-line">📞 Call 1930</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="chip chip-a" aria-hidden="true"><b>Urgency</b><span>pressure tactic</span></div>
+          <div class="chip chip-b" aria-hidden="true"><b>rajesh.trader@ybl</b><span>❌ not SEBI @valid</span></div>
+          <div class="chip chip-c" aria-hidden="true"><b>தமிழ்</b><span>spoken aloud</span></div>
+          <div class="chip chip-d" aria-hidden="true"><b>Secrecy</b><span>"don't tell family"</span></div>
+        </div>
+
+        <div class="demo-copy">
+          <h3 class="demo-title">Tell Kavach</h3>
+          <p class="demo-text">Speak, paste or forward the call script, WhatsApp message or payment request — from the app, Telegram, WhatsApp Business or Instagram.</p>
+        </div>
+      </div>
+
       <a class="button primary" href="app.html">Try it now →</a>
     </section>
 
