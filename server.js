@@ -9,7 +9,7 @@ const gemini = createGeminiClient({
   model: process.env.GEMINI_MODEL,
 });
 
-const server = createServer({ gemini });
+const server = createServer({ gemini, env: process.env });
 server.listen(port, () => {
   console.log(`Chat_Safe listening on :${port} (AI ${gemini.enabled ? `on: ${gemini.model}` : 'off: offline rules only'})`);
 });

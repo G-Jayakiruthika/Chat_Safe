@@ -63,6 +63,32 @@ test('a news-style mention without pressure tactics is damped', () => {
   assert.ok(newsOnly.score < 30);
 });
 
+test('a strong pattern with no pressure tactic is still flagged (regression)', () => {
+  // Two hits inside one category are a real pattern, not a news mention.
+  const r = analyzeRules('Join VIP stock tips channel, guaranteed profit daily');
+  assert.equal(r.tactics.length, 0);
+  assert.ok(r.score >= 30, `score ${r.score}`);
+  assert.equal(r.level, 'suspicious');
+});
+
+test('"update now" style urgency and "deposit to <upi>" payment asks are caught', () => {
+  const kyc = analyzeRules('Your KYC will be blocked, update now');
+  assert.ok(kyc.tactics.some((t) => t.id === 'urgency'));
+  assert.ok(kyc.score >= 30);
+  const pay = analyzeRules('Guaranteed 10% daily returns, deposit to rajesh.trader@ybl');
+  assert.ok(pay.tactics.some((t) => t.id === 'payment_ask'));
+});
+
+test('everyday messages stay safe (no false positives)', () => {
+  for (const msg of [
+    'Meeting at 5pm, please pay the electricity bill today',
+    'Chat_Safe helps you check scam messages safely.',
+    'Your order has been shipped, track it in the app',
+  ]) {
+    assert.equal(analyzeRules(msg).level, 'safe', msg);
+  }
+});
+
 test('handles empty and non-string input safely', () => {
   for (const input of ['', undefined, null, 42, {}]) {
     const r = analyzeRules(/** @type {any} */ (input));

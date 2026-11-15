@@ -1,10 +1,17 @@
 {
-  "name": "Chat_Safe — Scam X-Ray",
+  "name": "Chat_Safe — AI cyber guardian",
   "short_name": "Chat_Safe",
-  "description": "Free multilingual AI scam checker for India",
-  "start_url": "/",
+  "description": "Talk to Kavach in 23 Indian languages to check scam calls, messages and UPI payments.",
+  "id": "./app.html",
+  "start_url": "./app.html",
+  "scope": "./",
   "display": "standalone",
-  "background_color": "#f6f8f7",
-  "theme_color": "#0b3d2e",
-  "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+  "background_color": "#070b14",
+  "theme_color": "#070b14",
+  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }],
+  "share_target": {
+    "action": "./app.html",
+    "method": "GET",
+    "params": { "title": "title", "text": "text", "url": "url" }
+  }
 }

@@ -39,4 +39,40 @@ const safeLang = (code) => (typeof code === 'string' && BY_CODE.has(code) ? code
 /** @param {string} code */
 const languageName = (code) => BY_CODE.get(safeLang(code)).name;
 
-module.exports = { LANGUAGES, safeLang, languageName };
+/** Unicode script ranges → most likely language. Used for chat-app messages that carry no language. */
+const SCRIPT_HINTS = Object.freeze([
+  [/[஀-௿]/g, 'ta'],
+  [/[ఀ-౿]/g, 'te'],
+  [/[ಀ-೿]/g, 'kn'],
+  [/[ഀ-ൿ]/g, 'ml'],
+  [/[ঀ-৿]/g, 'bn'],
+  [/[઀-૿]/g, 'gu'],
+  [/[਀-੿]/g, 'pa'],
+  [/[଀-୿]/g, 'or'],
+  [/[᱐-᱿]/g, 'sat'],
+  [/[ꯀ-꯿]/g, 'mni'],
+  [/[؀-ۿ]/g, 'ur'],
+  [/[ऀ-ॿ]/g, 'hi'],
+]);
+
+/**
+ * Guess the language of a message from its script (Devanagari is reported as Hindi,
+ * Arabic script as Urdu). Latin text — including Tanglish/Hinglish — returns English.
+ * @param {unknown} text
+ * @returns {string}
+ */
+function detectLanguage(text) {
+  if (typeof text !== 'string' || !text) return 'en';
+  let best = 'en';
+  let bestCount = 0;
+  for (const [re, code] of SCRIPT_HINTS) {
+    const n = (text.match(re) || []).length;
+    if (n > bestCount) {
+      best = code;
+      bestCount = n;
+    }
+  }
+  return best;
+}
+
+module.exports = { LANGUAGES, safeLang, languageName, detectLanguage };

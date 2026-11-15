@@ -4,6 +4,7 @@ ENV NODE_ENV=production PORT=8080
 WORKDIR /app
 COPY package.json server.js ./
 COPY src ./src
+COPY tools ./tools
 COPY public ./public
 USER node
 EXPOSE 8080

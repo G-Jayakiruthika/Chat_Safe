@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Chat_Safe — AI cyber guardian for India. Talk to Kavach in 23 languages, scan scam messages, verify UPI IDs before investing and report to 1930.">
+  <meta name="theme-color" content="#070b14">
+  <title>Chat_Safe — Talk to Kavach</title>
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="styles.css">
+  <script src="theme.js"></script>
+</head>
+<body>
+  <canvas id="bg" class="bg" aria-hidden="true"></canvas>
+  <a class="skip" href="#main" data-i18n="skip">Skip to main content</a>
+
+  <header class="top">
+    <a class="brand" href="index.html" aria-label="Chat_Safe home">
+      <img src="icon.svg" alt="" width="40" height="40">
+      <div>
+        <p class="logo">Chat<span>_</span>Safe</p>
+        <p class="tagline" data-i18n="tagline">AI cyber guardian for every Indian — in your language</p>
+      </div>
+    </a>
+    <nav class="mainnav" aria-label="Pages">
+      <a href="index.html">Home</a>
+      <a href="app.html" aria-current="page" data-i18n="navApp">Kavach</a>
+      <a href="connect.html" id="navConnectLink" data-i18n="navConnect">Connect apps</a>
+    </nav>
+    <div class="controls" role="group" aria-label="Display settings">
+      <label for="lang" class="sr-only">Language / भाषा / மொழி</label>
+      <select id="lang" aria-label="Language">
+        <option value="en">English</option>
+      </select>
+      <button type="button" id="historyBtn" class="icon-btn" aria-label="Case files (saved chats)" aria-controls="cases" aria-expanded="false" title="Case files (H)">🗂️</button>
+      <button type="button" id="soundBtn" class="icon-btn" aria-label="Mute sounds" aria-pressed="false" title="Sound">🔊</button>
+      <button type="button" id="bigText" class="chip" aria-pressed="false" data-i18n="bigText">A+ Big text</button>
+      <button type="button" id="themeToggle" class="icon-btn" aria-label="Switch to light theme" title="Theme (T)">
+        <span class="sun" aria-hidden="true">☀️</span><span class="moon" aria-hidden="true">🌙</span>
+      </button>
+      <button type="button" id="helpBtn" class="icon-btn" aria-label="Keyboard shortcuts" title="Shortcuts (?)">⌨️</button>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- Voice agent -->
+    <section class="hero glass reveal" aria-labelledby="agentTitle">
+      <div class="avatar-wrap">
+        <canvas id="kavach" class="avatar" role="img" tabindex="0" aria-label="Kavach, the Chat_Safe 3D cyber guardian. Drag to spin, press Enter to poke."></canvas>
+        <p class="hint" data-i18n="dragHint">Drag to spin · tap to poke</p>
+        <p id="agentState" class="state-pill" role="status" aria-live="polite" data-i18n="state_idle">Ready to help</p>
+        <button type="button" id="mic" class="mic" aria-pressed="false">
+          <span class="mic-icon" aria-hidden="true">🎙️</span>
+          <span id="micLabel" data-i18n="micStart">Tap to speak</span>
+        </button>
+        <label class="toggle"><input type="checkbox" id="autoSpeak" checked> <span data-i18n="autoSpeak">Speak replies</span></label>
+        <div class="hud" aria-labelledby="hudTitle">
+          <p id="hudTitle" class="hud-title"><span data-i18n="learned">Scam types learned</span> <strong id="hudCount">0/8</strong></p>
+          <ol id="hudList" class="hud-list"></ol>
+        </div>
+      </div>
+
+      <div class="agent-panel">
+        <div class="panel-head">
+          <h1 id="agentTitle" data-i18n="agentTitle">Talk to Kavach</h1>
+          <div class="head-actions">
+            <button type="button" id="newChat" class="chip" data-i18n="newChat">＋ New chat</button>
+            <button type="button" id="demoBtn" class="chip demo-chip" data-i18n="demo">▶ Guided demo</button>
+          </div>
+        </div>
+        <p class="muted" data-i18n="agentIntro">Tap the mic and tell Kavach about a call, message or payment request. Or ask any safety question.</p>
+        <p id="uiNote" class="note" hidden></p>
+        <ol id="agentLog" class="chat" aria-live="polite" aria-label="Conversation with Kavach"></ol>
+        <div class="quick" role="group" aria-label="Quick questions">
+          <button type="button" class="chip" data-ask="chipReal" data-i18n="chipReal">Is this caller really from my bank?</button>
+          <button type="button" class="chip" data-ask="chipArrest" data-i18n="chipArrest">What is a digital arrest?</button>
+          <button type="button" class="chip" data-ask="chipLost" data-i18n="chipLost">I sent money to a scammer. What now?</button>
+        </div>
+        <form id="agentForm" class="ask" novalidate>
+          <label for="agentInput" class="sr-only" data-i18n="typeHere">Or type your question / paste a message</label>
+          <textarea id="agentInput" rows="2" maxlength="4000" dir="auto" data-i18n-placeholder="typeHere"></textarea>
+          <button type="submit" class="primary" data-i18n="send">Send</button>
+        </form>
+      </div>
+    </section>
+
+    <nav class="tabs reveal" role="tablist" aria-label="Chat_Safe tools">
+      <button role="tab" id="tab-xray" aria-controls="panel-xray" aria-selected="true" data-i18n="tabXray">🔍 Scan a message</button>
+      <button role="tab" id="tab-pay" aria-controls="panel-pay" aria-selected="false" tabindex="-1" data-i18n="tabPay">✅ Check before you pay</button>
+      <button role="tab" id="tab-paati" aria-controls="panel-paati" aria-selected="false" tabindex="-1" data-i18n="tabPaati">👵 Paati decoy</button>
+    </nav>
+
+    <!-- Scam X-Ray -->
+    <section id="panel-xray" role="tabpanel" aria-labelledby="tab-xray" class="panel glass">
+      <form id="xrayForm" novalidate>
+        <label for="message" class="label" data-i18n="msgLabel">Paste the WhatsApp / SMS / Telegram message, or what the caller said</label>
+        <div class="scan-box" id="scanBox">
+          <textarea id="message" rows="6" maxlength="4000" required dir="auto" aria-describedby="msgHelp"></textarea>
+        </div>
+        <p id="msgHelp" class="help" data-i18n="msgHelp">Any Indian language works. Nothing is stored.</p>
+        <div class="samples" role="group" aria-label="Try an example">
+          <span data-i18n="tryExample">Try an example:</span>
+          <button type="button" class="chip" data-sample="stock" data-i18n="sStock">Stock-tip group</button>
+          <button type="button" class="chip" data-sample="arrest" data-i18n="sArrest">Digital arrest</button>
+          <button type="button" class="chip" data-sample="task" data-i18n="sTask">Part-time job</button>
+          <button type="button" class="chip" data-sample="safe" data-i18n="sSafe">Normal message</button>
+        </div>
+        <div class="actions">
+          <button type="submit" class="primary" id="analyzeBtn" data-i18n="analyze">Scan for scam</button>
+        </div>
+      </form>
+      <div id="xrayStatus" class="status" role="status" aria-live="polite"></div>
+
+      <article id="result" class="result" hidden aria-labelledby="verdict">
+        <div class="score-row">
+          <div class="gauge" id="gauge" role="meter" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Scam risk score">
+            <span id="scoreText">0</span>
+          </div>
+          <div>
+            <p class="level" id="levelText"></p>
+            <h3 id="verdict" tabindex="-1" dir="auto"></h3>
+            <p id="scamType" class="muted" dir="auto"></p>
+          </div>
+        </div>
+        <p id="explanation" dir="auto"></p>
+        <button type="button" id="readAloud" class="secondary" data-i18n="readAloud">🔊 Read aloud</button>
+
+        <h4 data-i18n="redFlags">Warning signs found</h4>
+        <ul id="redFlags" class="flags" dir="auto"></ul>
+        <h4 data-i18n="doNow">What to do now</h4>
+        <ol id="nextSteps" dir="auto"></ol>
+
+        <div id="upiBlock" hidden>
+          <h4 data-i18n="upiFound">Payment IDs in this message</h4>
+          <ul id="upiList" class="upi-list"></ul>
+        </div>
+
+        <div id="complaintBlock" hidden>
+          <h4 data-i18n="complaint">Ready-made 1930 complaint</h4>
+          <label for="complaint" class="sr-only">Complaint draft</label>
+          <textarea id="complaint" rows="8" readonly></textarea>
+          <div class="actions">
+            <button type="button" id="copyComplaint" class="secondary" data-i18n="copy">Copy</button>
+            <a id="familyAlert" class="button secondary" target="_blank" rel="noopener noreferrer" data-i18n="family">👨‍👩‍👧 Alert family on WhatsApp</a>
+            <a class="button secondary" href="https://cybercrime.gov.in" target="_blank" rel="noopener noreferrer" data-i18n="fileOnline">File at cybercrime.gov.in</a>
+            <a class="button danger" href="tel:1930" data-i18n="call1930">📞 Call 1930</a>
+          </div>
+        </div>
+        <p id="engine" class="muted small"></p>
+      </article>
+    </section>
+
+    <!-- Pay-Check -->
+    <section id="panel-pay" role="tabpanel" aria-labelledby="tab-pay" class="panel glass" hidden>
+      <p data-i18n="payIntro">Someone asking you to pay for stock tips, IPO allotment or a "trading account"? Since 1 Oct 2025, SEBI-registered brokers and advisers can only collect money through "@valid" UPI IDs.</p>
+      <form id="payForm" novalidate>
+        <label for="upi" class="label" data-i18n="upiLabel">UPI ID you were asked to pay</label>
+        <input id="upi" type="text" inputmode="email" autocomplete="off" spellcheck="false" maxlength="300" placeholder="example: abc.brk@validhdfc" required>
+        <div class="actions"><button type="submit" class="primary" data-i18n="checkUpi">Check UPI ID</button></div>
+      </form>
+      <div id="payResult" class="status" role="status" aria-live="polite"></div>
+    </section>
+
+    <!-- Paati decoy -->
+    <section id="panel-paati" role="tabpanel" aria-labelledby="tab-paati" class="panel glass" hidden>
+      <p data-i18n="paatiIntro">Meet Kamala Paati — an AI grandma who keeps scammers busy so they can't target someone else.</p>
+      <ol id="chatLog" class="chat" aria-live="polite" aria-label="Decoy conversation"></ol>
+      <form id="paatiForm" novalidate>
+        <label for="scammerMsg" class="label" data-i18n="scammerLabel">Scammer's latest message</label>
+        <textarea id="scammerMsg" rows="3" maxlength="4000" required dir="auto"></textarea>
+        <div class="actions"><button type="submit" class="primary" data-i18n="paatiReply">Get Paati's reply</button></div>
+      </form>
+    </section>
+  </main>
+
+  <aside id="cases" class="drawer" aria-labelledby="casesTitle" hidden>
+    <div class="marquee" aria-hidden="true"><span>CASE FILES · STORED ON THIS DEVICE ONLY · SEARCH ANY WORD · CASE FILES · STORED ON THIS DEVICE ONLY · SEARCH ANY WORD ·&nbsp;</span><span>CASE FILES · STORED ON THIS DEVICE ONLY · SEARCH ANY WORD · CASE FILES · STORED ON THIS DEVICE ONLY · SEARCH ANY WORD ·&nbsp;</span></div>
+    <div class="drawer-head">
+      <h2 id="casesTitle" data-i18n="cases">Case files</h2>
+      <button type="button" id="closeCases" class="icon-btn" aria-label="Close case files">✕</button>
+    </div>
+    <label for="caseSearch" class="sr-only" data-i18n="searchCases">Search saved chats</label>
+    <input id="caseSearch" type="search" autocomplete="off" data-i18n-placeholder="searchCases" placeholder="Search saved chats">
+    <p id="caseCount" class="muted small" role="status" aria-live="polite"></p>
+    <ul id="caseList" class="case-list"></ul>
+    <div class="actions">
+      <button type="button" id="exportCases" class="secondary" data-i18n="export">⬇ Export</button>
+      <button type="button" id="clearCases" class="secondary" data-i18n="clearAll">🗑 Clear all</button>
+    </div>
+    <p class="muted small" data-i18n="privacy">Saved only in this browser. Nothing is uploaded.</p>
+  </aside>
+
+  <dialog id="helpDialog" aria-labelledby="helpTitle">
+    <h2 id="helpTitle">Keyboard shortcuts</h2>
+    <dl class="keys">
+      <dt><kbd>M</kbd></dt><dd>Start / stop the mic</dd>
+      <dt><kbd>/</kbd></dt><dd>Type to Kavach</dd>
+      <dt><kbd>S</kbd></dt><dd>Kavach tells a safety tip</dd>
+      <dt><kbd>H</kbd></dt><dd>Open case files (saved chats)</dd>
+      <dt><kbd>N</kbd></dt><dd>New chat</dd>
+      <dt><kbd>T</kbd></dt><dd>Light / dark theme</dd>
+      <dt><kbd>D</kbd></dt><dd>Play the guided demo</dd>
+      <dt><kbd>?</kbd></dt><dd>This help</dd>
+      <dt><kbd>Esc</kbd></dt><dd>Close panels / stop speaking</dd>
+    </dl>
+    <form method="dialog"><button class="primary">OK</button></form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <footer class="foot">
+    <p data-i18n="footer">Chat_Safe gives guidance, not legal advice. In an emergency call 1930 (cyber fraud) or 112.</p>
+  </footer>
+
+  <script src="i18n.js" defer></script>
+  <script src="api.js" defer></script>
+  <script src="history.js" defer></script>
+  <script src="sound.js" defer></script>
+  <script src="fx.js" defer></script>
+  <script src="avatar.js" defer></script>
+  <script src="app.js" defer></script>
+  <script src="demo.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Connect Chat_Safe to WhatsApp, WhatsApp Business, Telegram, Instagram and Messenger. Forward a suspicious message, get the scam verdict back.">
+  <meta name="theme-color" content="#070b14">
+  <title>Chat_Safe — Connect your chat apps</title>
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="styles.css">
+  <script src="theme.js"></script>
+</head>
+<body>
+  <canvas id="bg" class="bg" aria-hidden="true"></canvas>
+  <a class="skip" href="#main">Skip to main content</a>
+  <header class="top">
+    <a class="brand" href="index.html" aria-label="Chat_Safe home">
+      <img src="icon.svg" alt="" width="40" height="40">
+      <div>
+        <p class="logo">Chat<span>_</span>Safe</p>
+        <p class="tagline">AI cyber guardian for every Indian — in your language</p>
+      </div>
+    </a>
+    <nav class="mainnav" aria-label="Pages">
+      <a href="index.html">Home</a>
+      <a href="app.html">Kavach</a>
+      <a href="connect.html" aria-current="page">Connect apps</a>
+    </nav>
+    <div class="controls">
+      <button type="button" id="themeToggle" class="icon-btn" aria-label="Switch theme">
+        <span class="sun" aria-hidden="true">☀️</span><span class="moon" aria-hidden="true">🌙</span>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="glass panel reveal">
+      <p class="eyebrow">CHANNELS // 05</p>
+      <h1>Use Chat_Safe inside the apps you already use</h1>
+      <p class="muted">Forward or paste a suspicious message to the Chat_Safe bot. Kavach replies with the risk score, the warning signs and what to do, in the same language you wrote in.</p>
+      <p id="modeNote" class="note" hidden></p>
+    </section>
+
+    <div id="channels" class="channel-grid" aria-live="polite"></div>
+
+    <section class="glass panel reveal" aria-labelledby="ownerTitle">
+      <h2 id="ownerTitle">For the person deploying Chat_Safe</h2>
+      <p class="muted">Each connector switches on when its keys are set as environment variables on the server (for example in Google Cloud Run). Secrets never reach the browser.</p>
+      <div class="setup-grid">
+        <article>
+          <h3>✈️ Telegram bot</h3>
+          <ol>
+            <li>Create a bot with <strong>@BotFather</strong> and copy the token.</li>
+            <li>Set <code>TELEGRAM_BOT_TOKEN</code>, a random <code>TELEGRAM_WEBHOOK_SECRET</code> and <code>TELEGRAM_BOT_USERNAME</code>.</li>
+            <li>Register the webhook:</li>
+          </ol>
+          <pre><code id="tgCmd"></code></pre>
+          <button type="button" class="secondary" data-copy="tgCmd">Copy command</button>
+        </article>
+        <article>
+          <h3>🟢 WhatsApp Business (Cloud API)</h3>
+          <ol>
+            <li>In Meta for Developers, add the WhatsApp product to your app.</li>
+            <li>Set <code>META_APP_SECRET</code>, <code>META_VERIFY_TOKEN</code>, <code>WHATSAPP_TOKEN</code>, <code>WHATSAPP_PHONE_NUMBER_ID</code> and <code>WHATSAPP_DISPLAY_NUMBER</code>.</li>
+            <li>Callback URL: <code class="hookUrl"></code>, then subscribe to <em>messages</em>.</li>
+          </ol>
+        </article>
+        <article>
+          <h3>📸 Instagram DMs</h3>
+          <ol>
+            <li>Add Instagram messaging to the same Meta app (professional account).</li>
+            <li>Set <code>INSTAGRAM_TOKEN</code>, <code>INSTAGRAM_ACCOUNT_ID</code> and <code>INSTAGRAM_USERNAME</code>.</li>
+            <li>Use the same callback URL <code class="hookUrl"></code> and subscribe to <em>messages</em>.</li>
+          </ol>
+        </article>
+        <article>
+          <h3>💬 Facebook Messenger</h3>
+          <ol>
+            <li>Connect a Facebook Page to the Meta app.</li>
+            <li>Set <code>MESSENGER_PAGE_TOKEN</code> and <code>MESSENGER_PAGE_USERNAME</code>.</li>
+            <li>Same callback URL, subscribe the Page to <em>messages</em>.</li>
+          </ol>
+        </article>
+      </div>
+      <p class="muted small">Security: Telegram requests must carry the secret token; Meta requests must carry a valid <code>X-Hub-Signature-256</code> HMAC. Anything else is rejected with 401. Duplicate deliveries are ignored.</p>
+    </section>
+  </main>
+
+  <footer class="foot"><p>Chat_Safe gives guidance, not legal advice. In an emergency call 1930 (cyber fraud) or 112.</p></footer>
+  <script src="api.js" defer></script>
+  <script src="fx.js" defer></script>
+  <script src="connect.js" defer></script>
+</body>
+</html>

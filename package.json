@@ -1,7 +1,7 @@
 {
   "name": "chat_safe",
-  "version": "2.0.0",
-  "description": "Multilingual AI Scam X-Ray for India: message scam detection, SEBI @valid UPI Pay-Check, AI 'Paati' scam-baiter and 1930 complaint drafts. Gemini + Cloud Run, zero dependencies.",
+  "version": "2.1.0",
+  "description": "Chat_Safe — AI cyber guardian for India. Kavach 3D voice agent in 23 languages, scam X-Ray, SEBI @valid Pay-Check, Paati decoy, 1930 complaints, and Telegram/WhatsApp/Instagram/Messenger bots. Zero dependencies.",
   "main": "server.js",
   "private": true,
   "license": "MIT",
@@ -11,6 +11,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node --env-file=.env server.js",
+    "build": "node tools/build-core.js public",
     "test": "node --test test/*.test.js",
     "coverage": "node --test --experimental-test-coverage test/*.test.js"
   }

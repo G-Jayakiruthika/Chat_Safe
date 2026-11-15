@@ -122,6 +122,7 @@ const TACTICS = [
     weight: 12,
     patterns: [
       /\b(immediately|urgent(ly)?|right\s*now|within\s*\d+\s*(min|minutes|hours?)|today\s*only|last\s*chance|before\s*\d)/i,
+      /\b(act|update|click|pay|verify|respond|register|join)\s+now\b/i,
       /turant|jaldi|abhi\s*ke\s*abhi|तुरंत|जल्दी/i,
       /udane|seekiram|உடனே|சீக்கிரம்/i,
     ],
@@ -155,6 +156,7 @@ const TACTICS = [
       /\b(transfer|deposit|pay|send)\b.{0,30}(₹|rs\.?|inr|money|amount|upi|account|fees?|deposit)/i,
       /(security|refundable|verification)\s*(deposit|amount)/i,
       /\b(first|advance|upfront)\b.{0,20}\b(pay|deposit|prepaid|fee)|prepaid\s*task\s*of/i,
+      /\b(transfer|deposit|pay|send)\b[\s\w.,₹-]{0,30}@[a-z]/i,
       /\bgift\s*cards?\b/i,
       /पैसे\s*भेज|ट्रांसफर/i,
       /பணம்\s*அனுப்பு|டிரான்ஸ்பர்/i,
@@ -238,8 +240,12 @@ function analyzeRules(text, extra = {}) {
   for (const t of tactics) score += t.weight + (t.hits.length - 1) * 3;
   score += Math.min(extra.suspiciousIndicators || 0, 3) * 8;
 
-  // A category with no pressure tactic is often just a news article or a warning message.
-  if (tactics.length === 0) score = Math.round(score * 0.5);
+  // With no pressure tactic, one lone keyword is usually a news article or a safety warning.
+  // Several hits inside one category is a real pattern, so damp it only slightly.
+  if (tactics.length === 0) {
+    const strongest = categories.reduce((n, c) => Math.max(n, c.hits.length), 0);
+    score = Math.round(score * (strongest >= 2 ? 0.85 : 0.5));
+  }
 
   score = Math.max(0, Math.min(MAX_SCORE, Math.round(score)));
   categories.sort((a, b) => b.weight - a.weight);
