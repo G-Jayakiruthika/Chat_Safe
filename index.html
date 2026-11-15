@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" data-palette="mantis">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Chat_Safe — an AI cyber guardian for every Indian. Talk to Kavach in 23 languages to check scam calls, messages and UPI payments before the money moves.">
+  <meta name="theme-color" content="#070b14">
+  <title>Chat_Safe — Stop the scam before the money moves</title>
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="palettes.css">
+  <link rel="stylesheet" href="explainer.css">
+  <link rel="stylesheet" href="landing.css">
+  <script src="theme.js"></script>
+</head>
+<body class="landing">
+  <div id="boot" class="boot" aria-hidden="true">
+    <svg class="boot-shield" viewBox="0 0 64 72" fill="none" aria-hidden="true">
+      <path class="boot-draw" d="M32 3 59 13v26c0 17-11 28-27 33C16 67 5 56 5 39V13Z" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+      <path class="boot-tick" d="m20 36 8 8 17-18" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <div class="boot-bar"><span></span></div>
+  </div>
+
+
+  <canvas id="morph" class="bg" aria-hidden="true"></canvas>
+  <a class="skip" href="#main">Skip to main content</a>
+
+  <header class="top landing-top">
+    <a class="brand" href="index.html" aria-label="Chat_Safe home">
+      <img src="icon.svg" alt="" width="36" height="36">
+      <p class="logo">Chat<span>_</span>Safe</p>
+    </a>
+    <nav class="mainnav" aria-label="Sections">
+      <a href="#how">How it works</a>
+      <a href="#features">Features</a>
+      <a href="#eyes">Kavach</a>
+      <a href="#scamtypes">The 8 scams</a>
+      <a href="#languages">Languages</a>
+      <a href="connect.html">Connect apps</a>
+      <a href="account.html">Account</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <div class="controls">
+      <button type="button" id="themeToggle" class="icon-btn" aria-label="Switch theme">
+        <span class="sun" aria-hidden="true">☀️</span><span class="moon" aria-hidden="true">🌙</span>
+      </button>
+      <a class="button primary" href="app.html">Talk to Kavach</a>
+    </div>
+  </header>
+
+  <!-- Wordless explainer, plays by itself right under the menu -->
+  <section class="explainer-band" aria-labelledby="exTitle">
+    <h2 id="exTitle" class="sr-only">How Chat_Safe protects you, in pictures</h2>
+    <div id="explainer" class="explainer"></div>
+  </section>
+
+  <!-- HUD: section counter, ruler and scroll % -->
+  <div class="hud-rail" aria-hidden="true">
+    <span id="hudIndex" class="mono">0001 / 0010</span>
+    <span class="ruler">+++++×++++</span>
+    <span id="hudName" class="mono">GLOBE</span>
+  </div>
+  <div class="hud-progress mono" aria-hidden="true">
+    <b id="hudNum">01</b>
+    <span id="hudTotal">/ 09</span>
+    <span class="next" id="hudNext">NEXT ↓</span>
+  </div>
+
+  <main id="main">
+    <section class="stage hero" data-palette-name="mantis" data-shape="globe" aria-labelledby="heroTitle">
+      <p class="eyebrow">VERSION 2.0 // AI CYBER GUARDIAN // MADE FOR BHARAT</p>
+      <h1 id="heroTitle" class="mega">Stop the scam <em>before</em> the money moves.</h1>
+      <p class="lead">Talk to <strong>Kavach</strong>, a 3D guardian that listens in 23 Indian languages, X-rays scam calls and messages, checks UPI IDs against SEBI's <code>@valid</code> rule, and drafts your 1930 complaint.</p>
+      <div class="actions">
+        <a class="button primary big" href="app.html">🎙️ Talk to Kavach</a>
+        <a class="button secondary big" href="app.html?demo=1">▶ Watch the 60-second demo</a>
+      </div>
+      <p class="scroll-cue mono">SCROLL ↓</p>
+    </section>
+
+    <div class="ticker" aria-label="Scam types Chat_Safe detects">
+      <div class="ticker-track">
+        <span>DIGITAL ARREST</span><span>FAKE STOCK-TIP GROUPS</span><span>KYC / OTP</span><span>FEDEX DRUGS PARCEL</span><span>PART-TIME TASK JOBS</span><span>ELECTRICITY CUT-OFF</span><span>LOAN-APP SEXTORTION</span><span>CLONED-VOICE EMERGENCY</span>
+        <span aria-hidden="true">DIGITAL ARREST</span><span aria-hidden="true">FAKE STOCK-TIP GROUPS</span><span aria-hidden="true">KYC / OTP</span><span aria-hidden="true">FEDEX DRUGS PARCEL</span><span aria-hidden="true">PART-TIME TASK JOBS</span><span aria-hidden="true">ELECTRICITY CUT-OFF</span><span aria-hidden="true">LOAN-APP SEXTORTION</span><span aria-hidden="true">CLONED-VOICE EMERGENCY</span>
+      </div>
+    </div>
+
+    <section class="stage statement" data-palette-name="lionfish" data-shape="attack" aria-labelledby="problemTitle">
+      <p class="eyebrow">01 // THE PROBLEM</p>
+      <h2 id="problemTitle" class="sr-only">The problem</h2>
+      <p class="beat reveal-on-scroll">Every second, someone in India reports a cyber fraud…</p>
+      <p class="beat reveal-on-scroll">…most of the money is lost to <em>fake investment groups</em>, not phone calls…</p>
+      <p class="beat reveal-on-scroll">…and most warnings never reach people in <em>their own language</em>.</p>
+      <div class="stats">
+        <div class="stat reveal-on-scroll"><span class="num" data-count="19812" data-prefix="₹" data-suffix=" Cr">0</span><span class="label">lost to cyber fraud in 2025</span></div>
+        <div class="stat reveal-on-scroll"><span class="num" data-count="21.7" data-decimals="1" data-suffix=" lakh">0</span><span class="label">complaints in 2025</span></div>
+        <div class="stat reveal-on-scroll"><span class="num" data-count="77" data-suffix="%">0</span><span class="label">of losses from investment scams</span></div>
+        <div class="stat reveal-on-scroll"><span class="num" data-count="23" data-suffix="">0</span><span class="label">languages Kavach speaks</span></div>
+      </div>
+      <p class="muted small">Figures: I4C / National Cyber Crime Reporting Portal data for 2025, as reported in the press.</p>
+    </section>
+
+    <!-- Scroll-driven product demonstration: pinned phone + step pills (Autopilot-style) -->
+    <section id="how" class="stage demo-stage" data-palette-name="bluedragon" data-shape="shield" aria-labelledby="howTitle">
+      <p class="eyebrow">02 // HOW IT WORKS</p>
+      <h2 id="howTitle" class="big-title">Three steps. Under three seconds.</h2>
+
+      <div class="demo-wrap">
+        <ol class="step-rail" aria-label="Steps">
+          <li><button type="button" class="step-pill" data-step="0" aria-current="true"><span class="n">Step 01</span></button></li>
+          <li><button type="button" class="step-pill" data-step="1"><span class="n">02</span></button></li>
+          <li><button type="button" class="step-pill" data-step="2"><span class="n">03</span></button></li>
+        </ol>
+
+        <div class="demo-stage-visual">
+          <div class="phone-3d">
+            <div class="phone-screen">
+              <div class="ps ps-0">
+                <p class="ps-head">🎙️ Listening…</p>
+                <div class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+                <p class="ps-line">"CBI officer says I am under digital arrest…"</p>
+              </div>
+              <div class="ps ps-1">
+                <p class="ps-head">Scanning</p>
+                <div class="ps-gauge">92</div>
+                <p class="ps-line bad">DANGER — almost certainly a scam</p>
+              </div>
+              <div class="ps ps-2">
+                <p class="ps-head">Ready to act</p>
+                <p class="ps-line ok">📝 1930 complaint drafted</p>
+                <p class="ps-line ok">👨‍👩‍👧 Family alerted</p>
+                <p class="ps-line">📞 Call 1930</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="chip chip-a" aria-hidden="true"><b>Urgency</b><span>pressure tactic</span></div>
+          <div class="chip chip-b" aria-hidden="true"><b>rajesh.trader@ybl</b><span>❌ not SEBI @valid</span></div>
+          <div class="chip chip-c" aria-hidden="true"><b>தமிழ்</b><span>spoken aloud</span></div>
+          <div class="chip chip-d" aria-hidden="true"><b>Secrecy</b><span>"don't tell family"</span></div>
+        </div>
+
+        <div class="demo-copy">
+          <h3 class="demo-title">Tell Kavach</h3>
+          <p class="demo-text">Speak, paste or forward the call script, WhatsApp message or payment request — from the app, Telegram, WhatsApp Business or Instagram.</p>
+        </div>
+      </div>
+
+      <a class="button primary" href="app.html">Try it now →</a>
+    </section>
+
+    <section id="features" class="stage" data-palette-name="starfish" data-shape="lock" aria-labelledby="featTitle">
+      <p class="eyebrow">03 // WHAT'S INSIDE</p>
+      <h2 id="featTitle" class="big-title">Six shields in one app.</h2>
+      <div class="feature-grid">
+        <article class="feature reveal-on-scroll"><span aria-hidden="true">🎙️</span><h3>Voice agent</h3><p>Talk to Kavach hands-free. It listens, scans and answers aloud with a lip-synced 3D avatar.</p></article>
+        <article class="feature reveal-on-scroll"><span aria-hidden="true">🔍</span><h3>Scam X-Ray</h3><p>Risk score, scam type and the exact pressure tactics: urgency, secrecy, fear, OTP requests.</p></article>
+        <article class="feature reveal-on-scroll"><span aria-hidden="true">✅</span><h3>Pay-Check</h3><p>Is that "broker" UPI ID a SEBI-validated <code>@valid</code> handle? Check before you invest.</p></article>
+        <article class="feature reveal-on-scroll"><span aria-hidden="true">👵</span><h3>Paati decoy</h3><p>An AI grandma who wastes scammers' time, inspired by O2's dAIsy. She never shares real details.</p></article>
+        <article class="feature reveal-on-scroll"><span aria-hidden="true">🗂️</span><h3>Case files</h3><p>Every chat saved on your device only. Search any word with highlighted matches.</p></article>
+        <article class="feature reveal-on-scroll"><span aria-hidden="true">📲</span><h3>Inside your apps</h3><p>Telegram, WhatsApp Business, Instagram, Messenger and the Android share sheet.</p></article>
+      </div>
+    </section>
+
+    <section id="eyes" class="stage" data-palette-name="nautilus" data-shape="eye" aria-labelledby="eyesTitle">
+      <p class="eyebrow">04 // MEET KAVACH</p>
+      <h2 id="eyesTitle" class="big-title">Read the danger in its eyes.</h2>
+      <p class="lead">No reading needed. Kavach's eyes and colour change with the threat level, so elders and children understand at a glance.</p>
+      <ul class="eye-row">
+        <li class="reveal-on-scroll"><canvas data-mood="idle" aria-hidden="true"></canvas><strong>Calm</strong><span>Ready to help</span></li>
+        <li class="reveal-on-scroll"><canvas data-mood="safe" aria-hidden="true"></canvas><strong>Happy</strong><span>Safe message</span></li>
+        <li class="reveal-on-scroll"><canvas data-mood="suspicious" aria-hidden="true"></canvas><strong>Squint</strong><span>Suspicious — verify</span></li>
+        <li class="reveal-on-scroll"><canvas data-mood="high" aria-hidden="true"></canvas><strong>Angry</strong><span>Likely scam</span></li>
+        <li class="reveal-on-scroll"><canvas data-mood="critical" aria-hidden="true"></canvas><strong>Furious</strong><span>Scam — hang up!</span></li>
+      </ul>
+    </section>
+
+    <section id="scamtypes" class="stage" data-palette-name="anemone" data-shape="lock" aria-labelledby="typesTitle">
+      <p class="eyebrow">05 // THE 8 SCAMS</p>
+      <h2 id="typesTitle" class="big-title">Know all eight. Tap any card.</h2>
+      <p class="lead">One picture, what the scammer says, and the one rule to remember. Tap a card to try that exact message in the scanner.</p>
+      <div id="typeGrid" class="type-grid"></div>
+    </section>
+
+    <section id="languages" class="stage" data-palette-name="jellyfish" data-shape="ring" aria-labelledby="langTitle">
+      <p class="eyebrow">06 // EVERY LANGUAGE OF THE EIGHTH SCHEDULE</p>
+      <h2 id="langTitle" class="big-title">23 languages. One guardian.</h2>
+      <ul class="lang-cloud" aria-label="Supported languages">
+        <li>English</li><li lang="as">অসমীয়া</li><li lang="bn">বাংলা</li><li lang="brx">बड़ो</li><li lang="doi">डोगरी</li><li lang="gu">ગુજરાતી</li>
+        <li lang="hi">हिन्दी</li><li lang="kn">ಕನ್ನಡ</li><li lang="ks" dir="rtl">کٲشُر</li><li lang="kok">कोंकणी</li><li lang="mai">मैथिली</li><li lang="ml">മലയാളം</li>
+        <li lang="mni">ꯃꯤꯇꯩꯂꯣꯟ</li><li lang="mr">मराठी</li><li lang="ne">नेपाली</li><li lang="or">ଓଡ଼ିଆ</li><li lang="pa">ਪੰਜਾਬੀ</li><li lang="sa">संस्कृतम्</li>
+        <li lang="sat">ᱥᱟᱱᱛᱟᱲᱤ</li><li lang="sd" dir="rtl">سنڌي</li><li lang="ta">தமிழ்</li><li lang="te">తెలుగు</li><li lang="ur" dir="rtl">اردو</li>
+      </ul>
+      <p class="muted">Tanglish and Hinglish work too. Pick "Auto-detect" and Kavach replies in the script you wrote in.</p>
+    </section>
+
+    <section class="stage" data-palette-name="lionfish" data-shape="attack" aria-labelledby="storyTitle">
+      <p class="eyebrow">07 // SCAM STORIES <span class="muted">(illustrative)</span></p>
+      <h2 id="storyTitle" class="big-title">Real patterns. Stopped in seconds.</h2>
+      <div class="stories">
+        <article class="story reveal-on-scroll">
+          <p class="story-tag mono">DIGITAL ARREST</p>
+          <h3>"CBI" kept a retired teacher on video call for hours</h3>
+          <p>She speaks the officer's words to Kavach in Tamil. Kavach's eyes turn red: real police never arrest on video calls. Hang up and call 1930.</p>
+          <dl class="metrics"><div><dt>Risk</dt><dd>100</dd></div><div><dt>Verdict</dt><dd>&lt;1 s</dd></div><div><dt>1930 draft</dt><dd>Ready</dd></div></dl>
+        </article>
+        <article class="story reveal-on-scroll">
+          <p class="story-tag mono">FAKE STOCK GROUP</p>
+          <h3>"8% daily returns" in a VIP WhatsApp group</h3>
+          <p>He pastes the invite. Pay-Check flags <code>rajesh.trader@ybl</code> as a personal UPI ID — not a SEBI-registered broker.</p>
+          <dl class="metrics"><div><dt>Risk</dt><dd>88</dd></div><div><dt>UPI</dt><dd>❌ not @valid</dd></div><div><dt>Saved</dt><dd>₹25,000</dd></div></dl>
+        </article>
+        <article class="story reveal-on-scroll">
+          <p class="story-tag mono">TASK JOB</p>
+          <h3>"Like YouTube videos, earn ₹3000 a day"</h3>
+          <p>A student forwards it to the Chat_Safe Telegram bot. The reply warns that a prepaid task is always a scam.</p>
+          <dl class="metrics"><div><dt>Risk</dt><dd>65</dd></div><div><dt>Channel</dt><dd>Telegram</dd></div><div><dt>Language</dt><dd>Hinglish</dd></div></dl>
+        </article>
+      </div>
+    </section>
+
+    <section id="faq" class="stage" data-palette-name="anemone" data-shape="shield" aria-labelledby="faqTitle">
+      <p class="eyebrow">08 // QUESTIONS</p>
+      <h2 id="faqTitle" class="big-title">FAQ</h2>
+      <div class="faq">
+        <details><summary>Is my chat stored anywhere?</summary><p>Your case files are saved only in your own browser. You can search, export or delete them. The server does not keep messages.</p></details>
+        <details><summary>Does it work without the AI or the internet?</summary><p>Yes. The offline rules engine works without an API key, and the browser-only version runs entirely on your device. Gemini adds deeper answers in every language when it's available.</p></details>
+        <details><summary>Can it read my WhatsApp?</summary><p>No, and it never asks to. You choose what to share: paste it, use the Android share menu, or forward it to the Chat_Safe WhatsApp Business number.</p></details>
+        <details><summary>How do I install it on my phone?</summary><p>Open Chat_Safe in Chrome, tap the menu and choose "Install app" or "Add to Home screen". Then "Share → Chat_Safe" appears in WhatsApp and other apps.</p></details>
+        <details><summary>How does Pay-Check know a UPI ID is safe?</summary><p>Since 1 Oct 2025, SEBI-registered brokers, advisers and mutual funds collect money only through NPCI-issued "@valid" UPI handles. Chat_Safe checks the format and links to SEBI Check for confirmation.</p></details>
+        <details><summary>I already sent money. What now?</summary><p>Call 1930 immediately — the first hour matters most — then inform your bank and file at cybercrime.gov.in. Chat_Safe drafts the complaint for you.</p></details>
+      </div>
+    </section>
+
+    <section class="stage cta" data-palette-name="mantis" data-shape="eye" aria-labelledby="ctaTitle">
+      <p class="eyebrow">09 // YOUR TURN</p>
+      <h2 id="ctaTitle" class="mega">Kavach is watching out for you.</h2>
+      <div class="phones" aria-hidden="true">
+        <div class="phone"><div class="screen"><span class="bubble you">CBI says digital arrest…</span><span class="bubble bad">🔴 DANGER — this is a scam. Hang up.</span><span class="bubble ok">Call 1930 now</span></div></div>
+        <div class="phone tall"><div class="screen"><div class="mini-gauge">92</div><span class="bubble bad">⚠ Secrecy · Urgency · Fear</span><span class="bubble">📝 1930 complaint ready</span></div></div>
+        <div class="phone"><div class="screen"><span class="bubble you">rajesh.trader@ybl</span><span class="bubble bad">❌ Not a SEBI @valid ID</span><span class="bubble ok">✅ abc.brk@validhdfc</span></div></div>
+      </div>
+      <div class="actions center">
+        <a class="button primary big" href="app.html">🎙️ Talk to Kavach</a>
+        <a class="button secondary big" href="app.html?demo=1">▶ Guided demo</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <p>Chat_Safe · PromptWars X Noor AITH — Build for Impact · <a href="https://github.com/G-Jayakiruthika/Chat_Safe">GitHub</a> · <a href="connect.html">Connect apps</a>
+      <a href="account.html">Account</a></p>
+    <p>Guidance, not legal or financial advice. Emergency: <a href="tel:1930">1930</a> (cyber fraud) · <a href="tel:112">112</a>.</p>
+  </footer>
+
+  <script src="sound.js" defer></script>
+  <script src="icons.js" defer></script>
+  <script src="scamtypes.js" defer></script>
+  <script src="explainer.js" defer></script>
+  <script src="avatar.js" defer></script>
+  <script src="morph.js" defer></script>
+  <script src="landing.js" defer></script>
+  <script src="/cursor.js" defer></script>
+</body>
+</html>
