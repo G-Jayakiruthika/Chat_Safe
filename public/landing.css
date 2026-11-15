@@ -11,7 +11,16 @@
   writing-mode: vertical-rl; display: flex; gap: 1.2rem; color: var(--muted); font-size: .7rem; pointer-events: none;
 }
 .hud-rail .ruler { letter-spacing: .3em; color: var(--accent); }
-.hud-progress { position: fixed; right: 1.25rem; bottom: 1.25rem; z-index: 4; font-size: .8rem; color: var(--accent); pointer-events: none; }
+.hud-progress {
+  position: fixed; right: 1.25rem; bottom: 1.1rem; z-index: 4; pointer-events: none; text-align: right;
+  display: grid; gap: .15rem; font-size: .72rem; color: var(--muted);
+}
+.hud-progress b { font-size: 1.5rem; font-weight: 800; color: var(--ink); letter-spacing: .02em; }
+.hud-progress .next { color: var(--accent); }
+
+/* Pure-black stage so one glowing element dominates, as on the reference sites */
+body.landing { background: #07080c; }
+[data-theme="light"] body.landing, html[data-theme="light"] body.landing { background: var(--bg); }
 @media (max-width: 900px) { .hud-rail { display: none; } }
 
 /* Stages */
@@ -33,11 +42,13 @@
 .ticker-track span::before { content: "⚠ "; color: var(--critical); }
 
 /* Statement beats */
-.beat { font-size: clamp(1.6rem, 3.6vw, 2.6rem); line-height: 1.25; font-weight: 700; margin: 0 0 1.5rem; }
-.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; margin: 2rem 0 1rem; }
+.beat { font-size: clamp(1.6rem, 3.6vw, 2.6rem); line-height: 1.25; font-weight: 700; margin: 0 0 1.5rem; max-width: 640px; }
+/* The statement stage runs wider than its text so the four stats sit on one row. */
+.statement { max-width: 900px; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 1rem; margin: 2rem 0 1rem; }
 .stat { border-left: 2px solid var(--accent); padding: .3rem 0 .3rem 1rem; }
-.stat .num { display: block; font: 800 clamp(1.6rem, 3vw, 2.3rem)/1.1 ui-monospace, Consolas, monospace; color: var(--accent); }
-.stat .label { color: var(--muted); font-size: .9rem; }
+.stat .num { display: block; white-space: nowrap; font: 800 clamp(1.2rem, 2.2vw, 1.72rem)/1.15 ui-monospace, Consolas, monospace; color: var(--accent); }
+.stat .label { color: var(--muted); font-size: .82rem; }
 
 /* Steps */
 .steps { list-style: none; padding: 0; margin: 0 0 2rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; max-width: 760px; }
@@ -102,3 +113,6 @@
 @keyframes float { 50% { transform: translateY(-8px); } }
 @keyframes glow { 50% { box-shadow: 0 0 30px rgb(34 211 238 / .5); } }
 @media (prefers-reduced-motion: reduce) { .reveal-on-scroll { opacity: 1; transform: none; } }
+
+/* A lone CTA inside a flex-column stage must not stretch across the row */
+.stage > .button { align-self: flex-start; }

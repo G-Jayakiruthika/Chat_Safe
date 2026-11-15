@@ -132,6 +132,70 @@
 
   const smooth = (t) => t * t * (3 - 2 * t);
 
+
+  /**
+   * Flowing light ribbons — streams of glowing particles tracing curved paths,
+   * read here as network data in motion. Each section bends and recolours them:
+   * calm waves for safe traffic, a broken scatter during the attack section,
+   * a protective dome at the shield, tight parallel lanes at the lock.
+   */
+  const RIBBONS = 7;
+  const RIB_POINTS = 110;
+
+  function ribbonPoint(r, t, time, mode, turbulence) {
+    // Base: a long sine sweep across the screen, each ribbon offset in phase.
+    const x = t;
+    const spread = 0.26 + r * 0.035;
+    let y =
+      Math.sin(t * 2.6 + time * 0.35 + r * 0.9) * spread +
+      Math.sin(t * 5.1 - time * 0.22 + r * 2.1) * spread * 0.4;
+
+    if (mode === 'attack') {
+      // Shattered: the stream breaks into jagged, jittering fragments.
+      // Agitated but still flowing — a disturbed stream, not static noise.
+      const n = Math.sin((t * 9 + r * 13) * 12.9898) * 43758.5453;
+      y += (n - Math.floor(n) - 0.5) * 0.16 * turbulence;
+      y += Math.sin(t * 14 + time * 2.4 + r) * 0.05 * turbulence;
+    } else if (mode === 'shield') {
+      // Bends into a protective dome over the centre.
+      const dome = Math.max(0, 1 - Math.abs(t) * 1.15);
+      y = y * (1 - dome * 0.85) - dome * (0.22 + r * 0.03);
+    } else if (mode === 'lock') {
+      // Flattens into tight, ordered lanes.
+      y = y * 0.22 + (r - (RIBBONS - 1) / 2) * 0.085;
+    } else if (mode === 'ring' || mode === 'eye') {
+      // Wraps around the focal object.
+      const a = t * Math.PI + time * 0.12 + r * 0.5;
+      const rad = 0.42 + r * 0.045;
+      return [Math.cos(a) * rad * 1.9, Math.sin(a) * rad];
+    }
+    return [x, y];
+  }
+
+  /** Draw one ribbon as three passes: wide soft glow, mid body, bright core. */
+  function strokeRibbon(ctx, pts, col, alpha) {
+    const passes = [
+      [7, 0.07 * alpha],
+      [2.4, 0.16 * alpha],
+      [0.9, 0.55 * alpha],
+    ];
+    for (const [width, a] of passes) {
+      ctx.strokeStyle = `rgba(${col[0]},${col[1]},${col[2]},${a.toFixed(3)})`;
+      ctx.lineWidth = width;
+      ctx.lineJoin = 'round';
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(pts[0][0], pts[0][1]);
+      for (let i = 1; i < pts.length - 1; i++) {
+        // Quadratic smoothing through the midpoints keeps the curve silky.
+        const [x1, y1] = pts[i];
+        const [x2, y2] = pts[i + 1];
+        ctx.quadraticCurveTo(x1, y1, (x1 + x2) / 2, (y1 + y2) / 2);
+      }
+      ctx.stroke();
+    }
+  }
+
   /**
    * @param {HTMLCanvasElement} canvas
    * @param {{sections: HTMLElement[], reducedMotion?: boolean, onIndex?: (i: number, f: number) => void}} opts
@@ -203,6 +267,26 @@
       const alphaBase = dark ? 0.85 : 0.75;
 
       ctx.clearRect(0, 0, w, h);
+
+      // --- Flowing data ribbons, behind the focal shape ---
+      const modeA = names[i];
+      const modeB = names[Math.min(names.length - 1, i + 1)];
+      const mode = k < 0.5 ? modeA : modeB;
+      const turbulence = 0.6 + Math.sin(k * Math.PI) * 0.8;
+      const ribScale = Math.min(w, h) * 0.75;
+      const rcx = w * 0.5;
+      const rcy = h * 0.5;
+      const ribAlpha = (dark ? 1 : 0.55) * (mode === 'eye' ? 0.6 : 1);
+      for (let r = 0; r < RIBBONS; r++) {
+        const pts = [];
+        for (let pI = 0; pI < RIB_POINTS; pI++) {
+          const t = (pI / (RIB_POINTS - 1)) * 2 - 1;
+          const [rx, ry] = ribbonPoint(r, t, time + smoothF * 2, mode, turbulence);
+          pts.push([rcx + rx * ribScale * 1.15, rcy + ry * ribScale]);
+        }
+        strokeRibbon(ctx, pts, col, ribAlpha * (0.45 + 0.55 * ((r + 1) / RIBBONS)));
+      }
+
       // Burst outward a little during transitions for a "data scatter" feel.
       const scatter = Math.sin(k * Math.PI) * 0.25;
       for (let p = 0; p < N; p++) {

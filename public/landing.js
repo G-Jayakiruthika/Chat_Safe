@@ -14,15 +14,12 @@
     onIndex: (i) => {
       $('hudIndex').textContent = `${String(i + 1).padStart(4, '0')} / ${String(sections.length).padStart(4, '0')}`;
       $('hudName').textContent = NAMES[sections[i]?.dataset.shape] || '';
+      $('hudNum').textContent = String(i + 1).padStart(2, '0');
+      $('hudTotal').textContent = `/ ${String(sections.length).padStart(2, '0')}`;
+      $('hudNext').textContent = i + 1 < sections.length ? 'NEXT ↓' : 'TOP ↑';
     },
   });
   morph.setDark(isDark());
-  const onScroll = () => {
-    const max = document.documentElement.scrollHeight - window.innerHeight;
-    $('scrollPct').textContent = String(Math.round((window.scrollY / Math.max(1, max)) * 100));
-  };
-  window.addEventListener('scroll', onScroll, { passive: true });
-  onScroll();
 
   /* ---------- Reveal on scroll + count-up stats ---------- */
   const countUp = (el) => {
