@@ -7,45 +7,6 @@
   const NAMES = { globe: 'GLOBE · CONNECTED INDIA', attack: 'ATTACK · SCAMS SPREADING', shield: 'SHIELD · PROTECTED', lock: 'LOCK · SECURED', ring: 'RING · 23 LANGUAGES', eye: 'EYE · KAVACH WATCHING' };
   const isDark = () => document.documentElement.dataset.theme !== 'light';
 
-  /* ---------- Boot loader ---------- */
-  const STEPS = ['Fetching threat signatures…', 'Loading 23 languages…', 'Calibrating Kavach\'s eyes…', 'Arming the shield…'];
-  const loader = $('loader');
-  function finishLoader(withSound) {
-    if (withSound && window.ChatSafeSound.muted) window.ChatSafeSound.toggle();
-    if (!withSound && !window.ChatSafeSound.muted) window.ChatSafeSound.toggle();
-    window.ChatSafeSound.play('unlock');
-    loader.classList.add('done');
-    document.body.classList.add('entered');
-    setTimeout(() => loader.remove(), 700);
-    $('heroTitle').focus?.();
-  }
-  (function countUp() {
-    let pct = 0;
-    const tick = () => {
-      pct = Math.min(100, pct + (reducedMotion ? 100 : 3 + Math.random() * 7));
-      $('loadPct').textContent = String(Math.floor(pct));
-      $('loadStep').textContent = STEPS[Math.min(STEPS.length - 1, Math.floor((pct / 100) * STEPS.length))];
-      if (pct < 100) setTimeout(tick, 40);
-      else {
-        $('loadStep').textContent = 'Shield online.';
-        $('enter').hidden = false;
-        $('enterQuiet').hidden = false;
-        $('enter').focus();
-      }
-    };
-    tick();
-  })();
-  $('enter').addEventListener('click', () => finishLoader(true));
-  $('enterQuiet').addEventListener('click', () => finishLoader(false));
-  // Returning visitors in the same session skip the loader.
-  try {
-    if (sessionStorage.getItem('chatsafe.entered')) {
-      loader.remove();
-      document.body.classList.add('entered');
-    }
-    sessionStorage.setItem('chatsafe.entered', '1');
-  } catch { /* ignore */ }
-
   /* ---------- Scroll morph + HUD ---------- */
   const morph = window.createMorph($('morph'), {
     sections,

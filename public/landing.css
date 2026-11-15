@@ -5,20 +5,6 @@
 .landing-top { background: transparent; border-bottom-color: transparent; backdrop-filter: blur(8px); }
 .landing-top .logo { font-size: 1.3rem; }
 
-/* Boot loader */
-.loader {
-  position: fixed; inset: 0; z-index: 100; display: grid; place-content: center; justify-items: center; gap: .5rem;
-  background: var(--bg); color: var(--ink); text-align: center; transition: opacity .6s, visibility .6s;
-}
-.loader.done { opacity: 0; visibility: hidden; }
-.loader-count { margin: 0; font: 800 clamp(4rem, 14vw, 9rem)/1 ui-monospace, Consolas, monospace; color: var(--accent); }
-.enter {
-  margin-top: 1rem; padding: 1rem 2.2rem; border-radius: 999px; border: 1px solid var(--accent); background: transparent; color: var(--ink);
-  font: 800 .95rem ui-monospace, Consolas, monospace; letter-spacing: .25em; text-transform: uppercase; animation: glow 2s ease-in-out infinite;
-}
-.enter:hover { background: var(--accent); color: var(--accent-ink); }
-.linkish { background: none; border: 0; color: var(--muted); text-decoration: underline; min-height: 36px; font-weight: 500; }
-
 /* HUD rail */
 .hud-rail {
   position: fixed; left: clamp(.5rem, 2vw, 1.5rem); top: 50%; z-index: 4; transform: translateY(-50%) rotate(180deg);
