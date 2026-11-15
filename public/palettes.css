@@ -1,0 +1,77 @@
+/* ---------------------------------------------------------------------------
+   Sea-creature palettes. Each page picks one; the landing page also switches
+   palette per section as you scroll. Every palette defines the same four roles
+   so any component works under any of them.
+
+     --accent   primary        --accent2  secondary
+     --accent3  tertiary       --accent4  highlight
+     --tintA/B  background washes
+   Text colours stay from the theme so contrast is never lost.
+--------------------------------------------------------------------------- */
+
+[data-palette="mantis"] {            /* peacock mantis shrimp */
+  --accent: #ff3d9a; --accent2: #19e3c1; --accent3: #a855f7; --accent4: #bef264;
+  --tintA: 255 61 154; --tintB: 25 227 193;
+}
+[data-palette="mandarin"] {          /* mandarin fish */
+  --accent: #3b82f6; --accent2: #ff8a3d; --accent3: #2dd4bf; --accent4: #fbbf24;
+  --tintA: 59 130 246; --tintB: 255 138 61;
+}
+[data-palette="bluedragon"] {        /* blue dragon */
+  --accent: #2563eb; --accent2: #7dd3fc; --accent3: #cbd5e1; --accent4: #f8fafc;
+  --tintA: 37 99 235; --tintB: 125 211 252;
+}
+[data-palette="anemone"] {           /* sea anemone */
+  --accent: #e5399b; --accent2: #ff7a5c; --accent3: #ff9f1c; --accent4: #22d3ee;
+  --tintA: 229 57 155; --tintB: 255 159 28;
+}
+[data-palette="lionfish"] {          /* lionfish — used for danger sections */
+  --accent: #e2562c; --accent2: #9f1239; --accent3: #f5e6c8; --accent4: #fb7185;
+  --tintA: 226 86 44; --tintB: 159 18 57;
+}
+[data-palette="starfish"] {          /* starfish */
+  --accent: #e07a5f; --accent2: #ffb997; --accent3: #f4e4c1; --accent4: #4ecdc4;
+  --tintA: 224 122 95; --tintB: 78 205 196;
+}
+[data-palette="nautilus"] {          /* nautilus */
+  --accent: #ff7f6b; --accent2: #f1e3c6; --accent3: #e8c39e; --accent4: #1e3a5f;
+  --tintA: 255 127 107; --tintB: 232 195 158;
+}
+[data-palette="jellyfish"] {         /* moon jellyfish — the softest */
+  --accent: #a78bfa; --accent2: #c4b5fd; --accent3: #f3e8ff; --accent4: #a5d8ff;
+  --tintA: 167 139 250; --tintB: 165 216 255;
+}
+
+/* Dark themes get a faint wash of the palette so the whole page shifts hue. */
+[data-theme="dark"] body {
+  background-image:
+    radial-gradient(1200px 620px at 82% -12%, rgb(var(--tintA) / .16), transparent 70%),
+    radial-gradient(900px 520px at -12% 108%, rgb(var(--tintB) / .14), transparent 70%);
+  transition: background-color .8s ease, background-image .8s ease;
+}
+[data-theme="light"] body {
+  background-image:
+    radial-gradient(1200px 620px at 82% -12%, rgb(var(--tintA) / .14), transparent 70%),
+    radial-gradient(900px 520px at -12% 108%, rgb(var(--tintB) / .12), transparent 70%);
+  transition: background-color .8s ease, background-image .8s ease;
+}
+
+/* Jellyfish and nautilus are pale: on light theme they need a darker ink. */
+[data-theme="light"][data-palette="jellyfish"] { --accent: #7c3aed; --accent2: #8b5cf6; }
+[data-theme="light"][data-palette="bluedragon"] { --accent3: #475569; --accent4: #0f172a; }
+[data-theme="light"][data-palette="nautilus"] { --accent2: #8a6d3b; --accent3: #6b5433; }
+[data-theme="light"][data-palette="starfish"] { --accent2: #b45309; --accent3: #8a6d3b; }
+
+/* Elements that should pick up the palette as it changes */
+.top, .glass, .panel, .result, button, .button, .chip, .tabs [role="tab"] {
+  transition: background-color .6s ease, border-color .6s ease, color .6s ease, box-shadow .6s ease;
+}
+
+/* A small swatch row so the palette is visible and nameable */
+.palette-note { display: flex; gap: .4rem; align-items: center; font-size: .72rem; color: var(--muted); }
+.swatches { display: inline-flex; gap: 3px; }
+.swatches i { width: 11px; height: 11px; border-radius: 3px; display: block; }
+.swatches i:nth-child(1) { background: var(--accent); }
+.swatches i:nth-child(2) { background: var(--accent2); }
+.swatches i:nth-child(3) { background: var(--accent3); }
+.swatches i:nth-child(4) { background: var(--accent4); }

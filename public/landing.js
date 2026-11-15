@@ -7,6 +7,56 @@
   const NAMES = { globe: 'GLOBE · CONNECTED INDIA', attack: 'ATTACK · SCAMS SPREADING', shield: 'SHIELD · PROTECTED', lock: 'LOCK · SECURED', ring: 'RING · 23 LANGUAGES', eye: 'EYE · KAVACH WATCHING' };
   const isDark = () => document.documentElement.dataset.theme !== 'light';
 
+  /* ---------- Preloader: fades itself out, nothing to click ---------- */
+  (() => {
+    const boot = $('boot');
+    if (!boot) return;
+    const hide = () => {
+      boot.classList.add('done');
+      setTimeout(() => boot.remove(), 800);
+    };
+    // Long enough to see the shield draw, but never a barrier.
+    setTimeout(hide, reducedMotion ? 150 : 1900);
+    window.addEventListener('load', () => setTimeout(hide, reducedMotion ? 0 : 1200));
+  })();
+
+  /* ---------- Wordless explainer ---------- */
+  if (window.createExplainer && $('explainer')) {
+    window.createExplainer($('explainer'), { reducedMotion });
+  }
+
+  /* ---------- The eight scam types ---------- */
+  (() => {
+    const grid = $('typeGrid');
+    if (!grid || !window.SCAM_TYPES) return;
+    let learned = [];
+    try {
+      learned = (localStorage.getItem('chatsafe.learned') || '').split(',');
+    } catch { /* storage blocked */ }
+
+    grid.replaceChildren(...window.SCAM_TYPES.map((t, i) => {
+      const card = document.createElement('a');
+      card.className = `type-card${learned.includes(t.id) ? ' learned' : ''}`;
+      card.href = `app.html?try=${encodeURIComponent(t.id)}`;
+      card.style.animationDelay = `${i * 60}ms`;
+      const el = (tag, cls, text) => {
+        const n = document.createElement(tag);
+        n.className = cls;
+        n.textContent = text;
+        return n;
+      };
+      const ico = el('span', 'ico', t.icon);
+      ico.setAttribute('aria-hidden', 'true');
+      card.append(ico, el('span', 'nm', t.name), el('p', 'says', `\u201c${t.says}\u201d`), el('p', 'rule', t.rule), el('span', 'cta', 'Try this one \u2192'));
+      if (learned.includes(t.id)) {
+        const b = el('span', 'badge-learned', '\u2705');
+        b.title = 'You have already seen this one';
+        card.append(b);
+      }
+      return card;
+    }));
+  })();
+
   /* ---------- Scroll morph + HUD ---------- */
   const morph = window.createMorph($('morph'), {
     sections,
@@ -17,6 +67,8 @@
       $('hudNum').textContent = String(i + 1).padStart(2, '0');
       $('hudTotal').textContent = `/ ${String(sections.length).padStart(2, '0')}`;
       $('hudNext').textContent = i + 1 < sections.length ? 'NEXT ↓' : 'TOP ↑';
+      const pal = sections[i]?.dataset.paletteName;
+      if (pal) document.documentElement.dataset.palette = pal;
     },
   });
   morph.setDark(isDark());

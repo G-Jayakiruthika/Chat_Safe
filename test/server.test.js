@@ -33,7 +33,7 @@ test('health endpoint reports AI status', async () => {
   await withServer(fakeGemini(), async (base) => {
     const res = await fetch(`${base}/api/health`);
     assert.equal(res.status, 200);
-    assert.deepEqual(await res.json(), { ok: true, ai: false });
+    assert.deepEqual(await res.json(), { ok: true, ai: false, accounts: false });
   });
 });
 

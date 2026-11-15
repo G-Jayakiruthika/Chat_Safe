@@ -270,6 +270,8 @@
     }
     store('learned', [...learnedSet].join(','));
     renderHud();
+    renderTypes();
+    syncProgress(true);
   }
 
   /* ---------- Case files (saved chats) ---------- */
@@ -535,6 +537,44 @@
     }
   }
 
+  /* ---------- The eight scam types, inside the app ---------- */
+  function renderTypes() {
+    const grid = $('typeGrid');
+    if (!grid || !window.SCAM_TYPES) return;
+    grid.replaceChildren(...window.SCAM_TYPES.map((t, i) => {
+      const card = document.createElement('button');
+      card.type = 'button';
+      card.className = `type-card${learnedSet.has(t.id) ? ' learned' : ''}`;
+      card.style.animationDelay = `${i * 50}ms`;
+      const el = (tag, cls, text) => {
+        const n = document.createElement(tag);
+        n.className = cls;
+        n.textContent = text;
+        return n;
+      };
+      const ico = el('span', 'ico', t.icon);
+      ico.setAttribute('aria-hidden', 'true');
+      card.append(ico, el('span', 'nm', t.name), el('p', 'says', `\u201c${t.says}\u201d`), el('p', 'rule', t.rule), el('span', 'cta', t.id === 'investment' ? 'Scan this one \u2192' : 'Scan this one \u2192'));
+      if (learnedSet.has(t.id)) {
+        const b = el('span', 'badge-learned', '\u2705');
+        b.title = 'Already seen';
+        card.append(b);
+      }
+      card.addEventListener('click', () => tryType(t.id));
+      return card;
+    }));
+  }
+
+  /** Load one scam type's real example into the scanner and run it. */
+  function tryType(id) {
+    const t = (window.SCAM_TYPES || []).find((x) => x.id === id);
+    if (!t) return;
+    selectTab($('tab-xray'), false);
+    $('message').value = t.sample;
+    $('panel-xray').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    analyzeText(t.sample);
+  }
+
   /* ---------- Tabs ---------- */
   const tabs = Array.from(document.querySelectorAll('[role="tab"]'));
   function selectTab(tab, focus = true) {
@@ -580,6 +620,62 @@
     const fn = actions[e.key.toLowerCase()];
     if (fn) { e.preventDefault(); fn(); }
   });
+
+  /* ---------- Scam of the day: one card, a new one every morning ---------- */
+  function renderDaily() {
+    const types = window.SCAM_TYPES || [];
+    if (!types.length) return;
+    const day = new Date().toISOString().slice(0, 10);
+    // Same scam for everyone on a given date, and it moves on at midnight.
+    const idx = [...day].reduce((n, ch) => n + ch.charCodeAt(0), 0) % types.length;
+    const t = types[idx];
+    if (load('dailySeen') === day) return;
+    $('dailyTitle').textContent = `${t.icon}  ${t.name}`;
+    $('dailySays').textContent = `\u201c${t.says}\u201d`;
+    $('dailyRule').textContent = t.rule;
+    $('daily').hidden = false;
+    $('dailyTry').onclick = () => {
+      store('dailySeen', day);
+      $('daily').hidden = true;
+      tryType(t.id);
+    };
+    $('dailyHide').onclick = () => {
+      store('dailySeen', day);
+      $('daily').hidden = true;
+    };
+  }
+
+  /* ---------- Daily streak (only when signed in on the server build) ---------- */
+  let syncTimer = null;
+  let signedIn = false;
+  function syncProgress(scanned = false) {
+    if (!signedIn) return; // no account on this build, or nobody logged in
+    clearTimeout(syncTimer);
+    syncTimer = setTimeout(() => {
+      fetch('api/progress', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ learned: [...learnedSet], scanned }),
+      })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((d) => {
+          if (!d) return;
+          $('streakNum').textContent = String(d.user.streak);
+          $('streakBadge').hidden = false;
+          $('streakBadge').title = `${d.user.streak}-day streak · best ${d.user.best} · tap for your account`;
+        })
+        .catch(() => {});
+    }, 400);
+  }
+
+  fetch('api/me', { cache: 'no-store' })
+    .then((r) => (r.ok ? r.json() : null))
+    .then((d) => {
+      if (!d?.user) return;
+      signedIn = true;
+      syncProgress(false);
+    })
+    .catch(() => {});
 
   /* ---------- Wire up ---------- */
   $('resetView').addEventListener('click', () => { kavach.resetView(); Sound.play('blip'); });
@@ -657,6 +753,8 @@
   kavach.setDark(isDark());
   setMood('idle');
   renderHud();
+  renderTypes();
+  renderDaily();
 
   // Small surface for the guided demo (demo.js).
   window.ChatSafeApp = {
@@ -670,6 +768,7 @@
     closeCases: () => toggleCases(false),
     searchCases: (q) => { $('caseSearch').value = q; renderCases(); },
     setSample: (key) => { $('message').value = SAMPLES[key]; },
+    tryType,
     setAutoSpeak: (on) => { $('autoSpeak').checked = on; },
     get autoSpeak() { return $('autoSpeak').checked; },
     get lang() { return lang; },
@@ -685,6 +784,11 @@
       if (shared) {
         window.history.replaceState(null, '', location.pathname);
         askAgent(shared.slice(0, 4000));
+      }
+      const want = params.get('try');
+      if (want) {
+        window.history.replaceState(null, '', location.pathname);
+        tryType(want);
       }
       if (params.get('demo') === '1') window.ChatSafeDemo?.start();
     });

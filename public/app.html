@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="dark" data-palette="mandarin">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,6 +9,7 @@
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="palettes.css">
   <script src="theme.js"></script>
 </head>
 <body>
@@ -27,12 +28,14 @@
       <a href="index.html">Home</a>
       <a href="app.html" aria-current="page" data-i18n="navApp">Kavach</a>
       <a href="connect.html" id="navConnectLink" data-i18n="navConnect">Connect apps</a>
+      <a href="account.html" data-i18n="navAccount">Account</a>
     </nav>
     <div class="controls" role="group" aria-label="Display settings">
       <label for="lang" class="sr-only">Language / भाषा / மொழி</label>
       <select id="lang" aria-label="Language">
         <option value="en">English</option>
       </select>
+      <a href="account.html" id="streakBadge" class="streak" hidden><span class="flame" aria-hidden="true">🔥</span><span id="streakNum">0</span></a>
       <button type="button" id="historyBtn" class="icon-btn" aria-label="Case files (saved chats)" aria-controls="cases" aria-expanded="false" title="Case files (H)">🗂️</button>
       <button type="button" id="soundBtn" class="icon-btn" aria-label="Mute sounds" aria-pressed="false" title="Sound">🔊</button>
       <button type="button" id="bigText" class="chip" aria-pressed="false" data-i18n="bigText">A+ Big text</button>
@@ -78,6 +81,16 @@
           <button type="button" class="chip" data-ask="chipArrest" data-i18n="chipArrest">What is a digital arrest?</button>
           <button type="button" class="chip" data-ask="chipLost" data-i18n="chipLost">I sent money to a scammer. What now?</button>
         </div>
+        <aside id="daily" class="daily" aria-labelledby="dailyTitle" hidden>
+          <p class="daily-tag"><span aria-hidden="true">📅</span> <span id="dailyTag" data-i18n="scamOfDay">Today's scam</span></p>
+          <p id="dailyTitle" class="daily-name"></p>
+          <p id="dailySays" class="daily-says"></p>
+          <p id="dailyRule" class="daily-rule"></p>
+          <div class="actions">
+            <button type="button" id="dailyTry" class="primary" data-i18n="showMe">Show me this scam</button>
+            <button type="button" id="dailyHide" class="secondary" data-i18n="gotIt">Got it</button>
+          </div>
+        </aside>
         <div id="caseStrip" class="case-strip" role="group" aria-label="Recent chats" hidden></div>
         <form id="agentForm" class="ask" novalidate>
           <label for="agentInput" class="sr-only" data-i18n="typeHere">Or type your question / paste a message</label>
@@ -91,6 +104,7 @@
       <button role="tab" id="tab-xray" aria-controls="panel-xray" aria-selected="true" data-i18n="tabXray">🔍 Scan a message</button>
       <button role="tab" id="tab-pay" aria-controls="panel-pay" aria-selected="false" tabindex="-1" data-i18n="tabPay">✅ Check before you pay</button>
       <button role="tab" id="tab-paati" aria-controls="panel-paati" aria-selected="false" tabindex="-1" data-i18n="tabPaati">👵 Paati decoy</button>
+      <button role="tab" id="tab-learn" aria-controls="panel-learn" aria-selected="false" tabindex="-1" data-i18n="tabLearn">🎓 Learn the 8 scams</button>
     </nav>
 
     <!-- Scam X-Ray -->
@@ -174,6 +188,10 @@
         <div class="actions"><button type="submit" class="primary" data-i18n="paatiReply">Get Paati's reply</button></div>
       </form>
     </section>
+    <section id="panel-learn" role="tabpanel" aria-labelledby="tab-learn" class="panel glass" hidden>
+      <p data-i18n="learnIntro">The eight scams that take the most money in India. Tap any card to load that exact message into the scanner and see what Kavach says.</p>
+      <div id="typeGrid" class="type-grid"></div>
+    </section>
   </main>
 
   <div id="searchBar" class="searchbar" hidden>
@@ -224,6 +242,7 @@
     <p data-i18n="footer">Chat_Safe gives guidance, not legal advice. In an emergency call 1930 (cyber fraud) or 112.</p>
   </footer>
 
+  <script src="scamtypes.js" defer></script>
   <script src="i18n.js" defer></script>
   <script src="api.js" defer></script>
   <script src="history.js" defer></script>

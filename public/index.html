@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="dark" data-palette="mantis">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,10 +9,20 @@
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="palettes.css">
+  <link rel="stylesheet" href="explainer.css">
   <link rel="stylesheet" href="landing.css">
   <script src="theme.js"></script>
 </head>
 <body class="landing">
+  <div id="boot" class="boot" aria-hidden="true">
+    <svg class="boot-shield" viewBox="0 0 64 72" fill="none" aria-hidden="true">
+      <path class="boot-draw" d="M32 3 59 13v26c0 17-11 28-27 33C16 67 5 56 5 39V13Z" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+      <path class="boot-tick" d="m20 36 8 8 17-18" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <div class="boot-bar"><span></span></div>
+  </div>
+
 
   <canvas id="morph" class="bg" aria-hidden="true"></canvas>
   <a class="skip" href="#main">Skip to main content</a>
@@ -26,8 +36,10 @@
       <a href="#how">How it works</a>
       <a href="#features">Features</a>
       <a href="#eyes">Kavach</a>
+      <a href="#scamtypes">The 8 scams</a>
       <a href="#languages">Languages</a>
       <a href="connect.html">Connect apps</a>
+      <a href="account.html">Account</a>
       <a href="#faq">FAQ</a>
     </nav>
     <div class="controls">
@@ -37,6 +49,12 @@
       <a class="button primary" href="app.html">Talk to Kavach</a>
     </div>
   </header>
+
+  <!-- Wordless explainer, plays by itself right under the menu -->
+  <section class="explainer-band" aria-labelledby="exTitle">
+    <h2 id="exTitle" class="sr-only">How Chat_Safe protects you, in pictures</h2>
+    <div id="explainer" class="explainer"></div>
+  </section>
 
   <!-- HUD: section counter, ruler and scroll % -->
   <div class="hud-rail" aria-hidden="true">
@@ -51,7 +69,7 @@
   </div>
 
   <main id="main">
-    <section class="stage hero" data-shape="globe" aria-labelledby="heroTitle">
+    <section class="stage hero" data-palette-name="mantis" data-shape="globe" aria-labelledby="heroTitle">
       <p class="eyebrow">VERSION 2.0 // AI CYBER GUARDIAN // MADE FOR BHARAT</p>
       <h1 id="heroTitle" class="mega">Stop the scam <em>before</em> the money moves.</h1>
       <p class="lead">Talk to <strong>Kavach</strong>, a 3D guardian that listens in 23 Indian languages, X-rays scam calls and messages, checks UPI IDs against SEBI's <code>@valid</code> rule, and drafts your 1930 complaint.</p>
@@ -69,7 +87,7 @@
       </div>
     </div>
 
-    <section class="stage statement" data-shape="attack" aria-labelledby="problemTitle">
+    <section class="stage statement" data-palette-name="lionfish" data-shape="attack" aria-labelledby="problemTitle">
       <p class="eyebrow">01 // THE PROBLEM</p>
       <h2 id="problemTitle" class="sr-only">The problem</h2>
       <p class="beat reveal-on-scroll">Every second, someone in India reports a cyber fraud…</p>
@@ -85,7 +103,7 @@
     </section>
 
     <!-- Scroll-driven product demonstration: pinned phone + step pills (Autopilot-style) -->
-    <section id="how" class="stage demo-stage" data-shape="shield" aria-labelledby="howTitle">
+    <section id="how" class="stage demo-stage" data-palette-name="bluedragon" data-shape="shield" aria-labelledby="howTitle">
       <p class="eyebrow">02 // HOW IT WORKS</p>
       <h2 id="howTitle" class="big-title">Three steps. Under three seconds.</h2>
 
@@ -133,7 +151,7 @@
       <a class="button primary" href="app.html">Try it now →</a>
     </section>
 
-    <section id="features" class="stage" data-shape="lock" aria-labelledby="featTitle">
+    <section id="features" class="stage" data-palette-name="starfish" data-shape="lock" aria-labelledby="featTitle">
       <p class="eyebrow">03 // WHAT'S INSIDE</p>
       <h2 id="featTitle" class="big-title">Six shields in one app.</h2>
       <div class="feature-grid">
@@ -146,7 +164,7 @@
       </div>
     </section>
 
-    <section id="eyes" class="stage" data-shape="eye" aria-labelledby="eyesTitle">
+    <section id="eyes" class="stage" data-palette-name="nautilus" data-shape="eye" aria-labelledby="eyesTitle">
       <p class="eyebrow">04 // MEET KAVACH</p>
       <h2 id="eyesTitle" class="big-title">Read the danger in its eyes.</h2>
       <p class="lead">No reading needed. Kavach's eyes and colour change with the threat level, so elders and children understand at a glance.</p>
@@ -159,8 +177,15 @@
       </ul>
     </section>
 
-    <section id="languages" class="stage" data-shape="ring" aria-labelledby="langTitle">
-      <p class="eyebrow">05 // EVERY LANGUAGE OF THE EIGHTH SCHEDULE</p>
+    <section id="scamtypes" class="stage" data-palette-name="anemone" data-shape="lock" aria-labelledby="typesTitle">
+      <p class="eyebrow">05 // THE 8 SCAMS</p>
+      <h2 id="typesTitle" class="big-title">Know all eight. Tap any card.</h2>
+      <p class="lead">One picture, what the scammer says, and the one rule to remember. Tap a card to try that exact message in the scanner.</p>
+      <div id="typeGrid" class="type-grid"></div>
+    </section>
+
+    <section id="languages" class="stage" data-palette-name="jellyfish" data-shape="ring" aria-labelledby="langTitle">
+      <p class="eyebrow">06 // EVERY LANGUAGE OF THE EIGHTH SCHEDULE</p>
       <h2 id="langTitle" class="big-title">23 languages. One guardian.</h2>
       <ul class="lang-cloud" aria-label="Supported languages">
         <li>English</li><li lang="as">অসমীয়া</li><li lang="bn">বাংলা</li><li lang="brx">बड़ो</li><li lang="doi">डोगरी</li><li lang="gu">ગુજરાતી</li>
@@ -171,8 +196,8 @@
       <p class="muted">Tanglish and Hinglish work too. Pick "Auto-detect" and Kavach replies in the script you wrote in.</p>
     </section>
 
-    <section class="stage" data-shape="attack" aria-labelledby="storyTitle">
-      <p class="eyebrow">06 // SCAM STORIES <span class="muted">(illustrative)</span></p>
+    <section class="stage" data-palette-name="lionfish" data-shape="attack" aria-labelledby="storyTitle">
+      <p class="eyebrow">07 // SCAM STORIES <span class="muted">(illustrative)</span></p>
       <h2 id="storyTitle" class="big-title">Real patterns. Stopped in seconds.</h2>
       <div class="stories">
         <article class="story reveal-on-scroll">
@@ -196,8 +221,8 @@
       </div>
     </section>
 
-    <section id="faq" class="stage" data-shape="shield" aria-labelledby="faqTitle">
-      <p class="eyebrow">07 // QUESTIONS</p>
+    <section id="faq" class="stage" data-palette-name="anemone" data-shape="shield" aria-labelledby="faqTitle">
+      <p class="eyebrow">08 // QUESTIONS</p>
       <h2 id="faqTitle" class="big-title">FAQ</h2>
       <div class="faq">
         <details><summary>Is my chat stored anywhere?</summary><p>Your case files are saved only in your own browser. You can search, export or delete them. The server does not keep messages.</p></details>
@@ -209,8 +234,8 @@
       </div>
     </section>
 
-    <section class="stage cta" data-shape="eye" aria-labelledby="ctaTitle">
-      <p class="eyebrow">08 // YOUR TURN</p>
+    <section class="stage cta" data-palette-name="mantis" data-shape="eye" aria-labelledby="ctaTitle">
+      <p class="eyebrow">09 // YOUR TURN</p>
       <h2 id="ctaTitle" class="mega">Kavach is watching out for you.</h2>
       <div class="phones" aria-hidden="true">
         <div class="phone"><div class="screen"><span class="bubble you">CBI says digital arrest…</span><span class="bubble bad">🔴 DANGER — this is a scam. Hang up.</span><span class="bubble ok">Call 1930 now</span></div></div>
@@ -225,11 +250,14 @@
   </main>
 
   <footer class="foot">
-    <p>Chat_Safe · PromptWars X Noor AITH — Build for Impact · <a href="https://github.com/G-Jayakiruthika/Chat_Safe">GitHub</a> · <a href="connect.html">Connect apps</a></p>
+    <p>Chat_Safe · PromptWars X Noor AITH — Build for Impact · <a href="https://github.com/G-Jayakiruthika/Chat_Safe">GitHub</a> · <a href="connect.html">Connect apps</a>
+      <a href="account.html">Account</a></p>
     <p>Guidance, not legal or financial advice. Emergency: <a href="tel:1930">1930</a> (cyber fraud) · <a href="tel:112">112</a>.</p>
   </footer>
 
   <script src="sound.js" defer></script>
+  <script src="scamtypes.js" defer></script>
+  <script src="explainer.js" defer></script>
   <script src="avatar.js" defer></script>
   <script src="morph.js" defer></script>
   <script src="landing.js" defer></script>

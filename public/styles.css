@@ -381,3 +381,79 @@ body.searching::after { content: ""; position: fixed; inset: 0; z-index: 29; bac
 .case-chip[aria-current="true"] { border-color: var(--accent); background: rgb(34 211 238 / .14); }
 .case-chip .t { font-size: .78rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; }
 .case-chip .d { font-size: .68rem; color: var(--muted); font-family: ui-monospace, Consolas, monospace; }
+
+
+/* Channel badges on the Connect page */
+.ch-icon { width: 30px; height: 30px; display: block; }
+.channel-icon { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; background: rgb(255 255 255 / .07); border: 1px solid var(--border); flex: none; }
+
+/* ---------- The eight scam types ---------- */
+.type-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: .9rem; margin-top: 1.5rem; }
+.type-card {
+  position: relative; display: grid; gap: .4rem; text-align: start; align-content: start;
+  padding: 1.1rem; border-radius: 18px; border: 1px solid var(--border); background: var(--glass);
+  color: var(--ink); min-height: 0; font-weight: 400; overflow: hidden;
+  transition: transform .35s cubic-bezier(.2,.8,.2,1), border-color .35s, box-shadow .35s;
+}
+.type-card::before {
+  content: ""; position: absolute; inset: 0; opacity: 0; transition: opacity .35s;
+  background: radial-gradient(360px 160px at 20% 0%, rgb(var(--tintA) / .22), transparent 70%);
+}
+.type-card:hover, .type-card:focus-visible { transform: translateY(-6px); border-color: var(--accent); box-shadow: 0 18px 40px rgb(0 0 0 / .35); }
+.type-card:hover::before, .type-card:focus-visible::before { opacity: 1; }
+.type-card .ico { font-size: 2.4rem; line-height: 1; filter: drop-shadow(0 4px 10px rgb(0 0 0 / .4)); }
+.type-card .nm { font-size: 1.1rem; font-weight: 800; }
+.type-card .says { margin: 0; font-style: italic; color: var(--ink); opacity: .92; }
+.type-card .rule { margin: 0; font-size: .86rem; color: var(--muted); border-left: 3px solid var(--accent2); padding-left: .55rem; }
+.type-card .cta { margin-top: .3rem; font: 700 .74rem ui-monospace, Consolas, monospace; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); }
+.type-card.learned { border-color: var(--accent2); }
+.type-card .badge-learned { position: absolute; top: .7rem; right: .7rem; font-size: .9rem; }
+
+/* Cards animate in when they appear */
+.type-card { animation: card-in .55s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes card-in { from { opacity: 0; transform: translateY(24px) scale(.97); } to { opacity: 1; transform: none; } }
+
+/* ---------- Account page ---------- */
+.account-main { max-width: 760px; }
+.auth-tabs { margin: 1.25rem 0 1rem; }
+.auth-form { display: grid; gap: .45rem; }
+.auth-form label { font-weight: 700; margin-top: .5rem; }
+.auth-form button { margin-top: 1rem; }
+.status.error { color: var(--critical); font-weight: 700; }
+
+.stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: .75rem; margin: 1.25rem 0; }
+.stat-tile {
+  display: grid; gap: .1rem; justify-items: center; text-align: center; padding: 1rem .6rem;
+  border-radius: 16px; border: 1px solid var(--border); background: var(--glass); font-size: .82rem; color: var(--muted);
+  animation: card-in .5s cubic-bezier(.2,.8,.2,1) both;
+}
+.stat-tile .big { font: 800 2rem/1 ui-monospace, Consolas, monospace; color: var(--accent); }
+.learn-list { list-style: none; padding: 0; display: grid; gap: .4rem; }
+.learn-list li {
+  display: grid; grid-template-columns: auto 1fr auto; gap: .6rem; align-items: center;
+  padding: .55rem .8rem; border-radius: 12px; border: 1px solid var(--border); opacity: .55;
+}
+.learn-list li.got { opacity: 1; border-color: var(--accent2); background: rgb(var(--tintB) / .1); }
+.learn-list li span:first-child { font-size: 1.3rem; }
+
+/* ---------- Daily streak badge in the app header ---------- */
+.streak {
+  display: inline-flex; align-items: center; gap: .3rem; padding: .3rem .7rem; border-radius: 999px;
+  border: 1px solid var(--accent); color: var(--accent); background: rgb(var(--tintA) / .12);
+  font: 700 .8rem ui-monospace, Consolas, monospace; text-decoration: none; white-space: nowrap;
+}
+.streak[hidden] { display: none; }
+.streak .flame { animation: flicker 1.6s ease-in-out infinite; }
+@keyframes flicker { 50% { transform: scale(1.18) rotate(-6deg); } }
+
+/* ---------- Scam of the day ---------- */
+.daily {
+  display: grid; gap: .3rem; padding: .9rem 1rem; border-radius: 16px;
+  border: 1px solid var(--accent); background: rgb(var(--tintA) / .1);
+  animation: card-in .5s cubic-bezier(.2,.8,.2,1) both;
+}
+.daily[hidden] { display: none; }
+.daily-tag { margin: 0; font: 700 .72rem ui-monospace, Consolas, monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+.daily-name { margin: 0; font-size: 1.1rem; font-weight: 800; }
+.daily-says { margin: 0; font-style: italic; }
+.daily-rule { margin: 0; font-size: .86rem; color: var(--muted); }

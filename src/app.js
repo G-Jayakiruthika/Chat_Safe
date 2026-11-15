@@ -7,6 +7,7 @@ const path = require('node:path');
 const { createEngine, InputError, MAX_TEXT_CHARS } = require('./engine');
 const { createIntegrations } = require('./integrations');
 const { createLru } = require('./lru');
+const { DbError } = require('./db');
 const { buildCore } = require('../tools/build-core');
 
 const PUBLIC_DIR = path.join(__dirname, '..', 'public');
@@ -124,6 +125,33 @@ async function readJson(req, limit = MAX_BODY_BYTES) {
   }
 }
 
+const SESSION_COOKIE = 'cs_session';
+
+/** @param {string|undefined} header @param {string} name */
+function readCookie(header, name) {
+  for (const part of String(header || '').split(';')) {
+    const [k, ...v] = part.trim().split('=');
+    if (k === name) return decodeURIComponent(v.join('='));
+  }
+  return '';
+}
+
+/**
+ * HttpOnly + SameSite=Lax so the browser sends it on normal navigation but not
+ * cross-site, and Secure whenever the request arrived over TLS.
+ */
+function sessionCookie(token, expires, secure) {
+  const parts = [
+    `${SESSION_COOKIE}=${encodeURIComponent(token)}`,
+    'Path=/',
+    'HttpOnly',
+    'SameSite=Lax',
+    `Expires=${new Date(expires).toUTCString()}`,
+  ];
+  if (secure) parts.push('Secure');
+  return parts.join('; ');
+}
+
 /**
  * Build the HTTP request handler.
  * @param {{
@@ -133,7 +161,7 @@ async function readJson(req, limit = MAX_BODY_BYTES) {
  *   logger?: Pick<Console, 'error'>,
  * }} deps
  */
-function createHandler({ gemini, env = {}, fetchImpl, logger = console }) {
+function createHandler({ gemini, env = {}, fetchImpl, logger = console, db = null }) {
   const engine = createEngine({ gemini, logger });
   const integrations = createIntegrations({
     env,
@@ -143,10 +171,43 @@ function createHandler({ gemini, env = {}, fetchImpl, logger = console }) {
   });
   const allow = createRateLimiter(RATE_LIMIT);
   const allowWebhook = createRateLimiter({ windowMs: 60_000, max: 600 });
+  const allowAuth = createRateLimiter({ windowMs: 60_000, max: 12 });
   let coreJs = null; // built once, lazily
 
+  /* ---------- Accounts ---------- */
+  const isSecure = (req) => String(req.headers['x-forwarded-proto'] || '').split(',')[0].trim() === 'https';
+  const currentUser = (req) => (db ? db.userForToken(readCookie(req.headers.cookie, SESSION_COOKIE)) : null);
+
+  /** Routes that need the request and response, not just a JSON body. */
+  const authRoutes = {
+    'POST /api/signup': async (req, res, body) => {
+      if (!db) throw new HttpError(503, 'Accounts are not available on this deployment');
+      const { user, session } = db.signup(body);
+      res.setHeader('Set-Cookie', sessionCookie(session.token, session.expires, isSecure(req)));
+      return { user };
+    },
+    'POST /api/login': async (req, res, body) => {
+      if (!db) throw new HttpError(503, 'Accounts are not available on this deployment');
+      const { user, session } = db.login(body);
+      res.setHeader('Set-Cookie', sessionCookie(session.token, session.expires, isSecure(req)));
+      return { user };
+    },
+    'POST /api/logout': async (req, res) => {
+      if (db) db.logout(readCookie(req.headers.cookie, SESSION_COOKIE));
+      res.setHeader('Set-Cookie', sessionCookie('', 0, isSecure(req)));
+      return { ok: true };
+    },
+    'GET /api/me': async (req) => ({ user: currentUser(req), accounts: Boolean(db) }),
+    'POST /api/progress': async (req, res, body) => {
+      const me = currentUser(req);
+      if (!me) throw new HttpError(401, 'Please sign in first');
+      const learned = Array.isArray(body.learned) ? body.learned.filter((x) => typeof x === 'string').slice(0, 20) : [];
+      return { user: db.checkIn(me.id, { learned, scanned: Boolean(body.scanned) }) };
+    },
+  };
+
   const routes = {
-    'GET /api/health': async () => ({ ok: true, ai: engine.aiEnabled() }),
+    'GET /api/health': async () => ({ ok: true, ai: engine.aiEnabled(), accounts: Boolean(db) }),
     'GET /api/languages': async () => engine.languages(),
     'GET /api/integrations': async () => integrations.status(),
     'POST /api/agent': engine.agent,
@@ -212,6 +273,17 @@ function createHandler({ gemini, env = {}, fetchImpl, logger = console }) {
         return;
       }
 
+      const authRoute = authRoutes[`${req.method} ${pathname}`];
+      if (authRoute) {
+        const ip = String(req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'unknown').split(',')[0].trim();
+        // Sign-in attempts get their own, stricter budget.
+        if (req.method === 'POST' && !allowAuth(ip)) {
+          return sendJson(res, 429, { error: 'Too many attempts. Please wait a minute.' });
+        }
+        const body = req.method === 'POST' ? await readJson(req) : {};
+        return sendJson(res, 200, await authRoute(req, res, body));
+      }
+
       const route = routes[`${req.method} ${pathname}`];
       if (!route) {
         if (pathname.startsWith('/api/')) return sendJson(res, 404, { error: 'Not found' });
@@ -226,7 +298,7 @@ function createHandler({ gemini, env = {}, fetchImpl, logger = console }) {
       const body = req.method === 'POST' ? await readJson(req) : {};
       return sendJson(res, 200, await route(body));
     } catch (err) {
-      const known = err instanceof HttpError || err instanceof InputError;
+      const known = err instanceof HttpError || err instanceof InputError || err instanceof DbError;
       const status = known ? err.status : 500;
       if (status === 500) logger.error('[server]', err);
       if (!res.headersSent) sendJson(res, status, { error: status === 500 ? 'Internal error' : err.message });

@@ -8,7 +8,7 @@ Talk to **Kavach**, a 3D cyber guardian, in **English or any of India's 22 sched
 **Live web version: https://g-jayakiruthika.github.io/Chat_Safe/**
 The same detection engine runs inside the browser, so judges can open the link and use everything immediately. Nothing is uploaded; chats stay on the device.
 
-![languages](https://img.shields.io/badge/languages-23-22d3ee) ![scam%20types](https://img.shields.io/badge/scam%20types-8-f87171) ![tactics](https://img.shields.io/badge/pressure%20tactics-7-fb923c) ![channels](https://img.shields.io/badge/chat%20apps-5-34d399) ![tests](https://img.shields.io/badge/tests-69%20passing-success) ![deps](https://img.shields.io/badge/npm%20dependencies-0-8b5cf6) ![ai](https://img.shields.io/badge/AI-Gemini%202.5%20Flash-4285F4)
+![languages](https://img.shields.io/badge/languages-23-22d3ee) ![scam%20types](https://img.shields.io/badge/scam%20types-8-f87171) ![tactics](https://img.shields.io/badge/pressure%20tactics-7-fb923c) ![channels](https://img.shields.io/badge/chat%20apps-5-34d399) ![tests](https://img.shields.io/badge/tests-87%20passing-success) ![deps](https://img.shields.io/badge/npm%20dependencies-0-8b5cf6) ![ai](https://img.shields.io/badge/AI-Gemini%202.5%20Flash-4285F4) ![db](https://img.shields.io/badge/database-SQLite%20(built--in)-003B57)
 
 | Landing — scroll-driven 3D | Scroll morph: globe → attack → shield | Kavach reacts to a scam |
 |---|---|---|
@@ -19,6 +19,14 @@ The same detection engine runs inside the browser, so judges can open the link a
 **Kavach's eyes change with the threat level — readable without any text:**
 
 ![](docs/eyes.jpg)
+
+**The wordless explainer** plays by itself under the menu. No narration, no sentences — a stranger demands money, Kavach scans, Kavach says stop, the call is cut, 1930 is dialled:
+
+![](docs/explainer.jpg)
+
+| All eight scams, in plain language | Your account, streak and learning card |
+|---|---|
+| ![](docs/scam-types.jpg) | ![](docs/account.jpg) |
 
 ---
 
@@ -46,6 +54,10 @@ The same detection engine runs inside the browser, so judges can open the link a
 | 10 | **Learning HUD** | `app.html` | "Scam types learned 0/8" unlocks as you meet each scam, with a sound and a toast. |
 | 11 | **Scroll-driven demonstration** | `index.html` → *How it works* | A pinned phone mock whose screen advances through the three steps, with step pills and glass chips lifting off it. |
 | 12 | **Flowing data ribbons** | `index.html` | Streams of light behind the content that react to each section: calm waves, a disturbed red stream at the attack, a dome at the shield, ordered lanes at the lock. |
+| 13 | **Wordless explainer** | `index.html`, under the menu | A five-scene animation that plays by itself and explains the whole app **without a single word of narration** — see §3.4. |
+| 14 | **All eight scams, taught** | `app.html` → *Learn the 8 scams*, and `index.html` | One card per scam: a picture, what the scammer actually says, and the one rule to remember. Tap a card to run that exact message through the scanner. |
+| 15 | **Accounts, streaks and progress** | `account.html` | Optional sign-up and log-in. Keeps your language, daily streak, messages checked and scams learned across devices. |
+| 16 | **Scam of the day** | `app.html` | A different scam every morning, so there is a reason to come back. |
 | ★ | **Works offline / zero-install** | everywhere | The same engine is bundled to `core.js` and runs fully in the browser when there is no server or API key. |
 
 ### Accessibility and privacy
@@ -126,7 +138,44 @@ sequenceDiagram
 5. **Safety-first fusion** — if either engine is ≥ 80 confident, the **higher** score wins; otherwise 40% rules + 60% AI.
 6. **Levels** — `0–29 safe` · `30–59 suspicious` · `60–79 high` · `80–100 critical`.
 
-### 3.4 How the 3D avatar works (no libraries)
+### 3.4 Built for someone who cannot read
+
+This is the part of the project that decides whether it actually helps the people losing the money.
+
+| Barrier | What Chat_Safe does |
+|---|---|
+| **Cannot read English** | Everything that matters is spoken aloud in the user's own language, and the UI is translated in English, Tamil and Hindi. |
+| **Cannot read at all** | The **wordless explainer** under the menu plays a five-scene story on a loop: a stranger demands money → Kavach scans → Kavach turns red and raises a hand → the call is cut → 1930 is dialled and the money is safe. No narration, no sentences — only pictures, colour and movement. Kavach's **eyes and eyebrows** carry the verdict, and the risk gauge is a colour, not a number. |
+| **Never used an app** | One big microphone button. Tap, talk, listen. Everything else is optional. |
+| **Does not trust apps** | Nothing is uploaded, nothing is stored on the server, and the app says so on screen. |
+| **Small or old phone** | No install needed, works offline, zero dependencies, and the whole site is about 1 MB. |
+
+### 3.5 Colour: eight sea-creature palettes
+
+The user asked for the colours of real sea creatures, and each page — and each section of the landing page — wears a different one. `public/palettes.css` defines eight, each with the same four roles so every component works under any of them.
+
+| Palette | Colours | Where |
+|---|---|---|
+| **Peacock mantis shrimp** | magenta · teal · purple · lime | Landing hero and closing call to action |
+| **Lionfish** | rust · burgundy · cream · black | The problem, and the scam stories — the danger sections |
+| **Blue dragon** | cobalt · ice blue · silver · white | How it works, and the Connect-apps page |
+| **Starfish** | terracotta · peach · cream · seafoam | Features |
+| **Nautilus** | coral · ivory · champagne · navy | Meet Kavach |
+| **Moon jellyfish** | lavender · lilac · pearl · blush · ice blue | Languages, and the Account page |
+| **Sea anemone** | fuchsia · coral · orange · aqua · lilac | The eight scams, and the FAQ |
+| **Mandarin fish** | royal blue · orange · turquoise · gold | The app itself |
+
+The palette changes as you scroll, and every colour-carrying property transitions over 0.6 s, so the whole page drifts hue section by section. Light and dark themes each get their own adjustments so pale palettes keep their contrast.
+
+### 3.6 Coming back tomorrow
+
+Safety apps get installed once and forgotten, and then their advice goes stale. Three things pull people back:
+
+- **Scam of the day** — a different scam each morning, chosen from the date so everyone sees the same one, with the line the scammer uses and the rule to remember.
+- **Streaks** — a 🔥 counter in the header, with your best streak kept. Checking in once a day keeps it alive.
+- **A learning card** — the eight scams unlock as you meet them, with a sound and a toast, and the card lives on your account so progress follows you between devices.
+
+### 3.7 How the 3D avatar works (no libraries)
 
 `public/avatar.js` is a 3D engine written from scratch in Canvas 2D:
 
@@ -138,7 +187,7 @@ sequenceDiagram
 6. **States**: idle · listening (wide eyes, sonar rings) · thinking (eyes look up, scan line) · speaking (7-bar mouth equaliser driven by `SpeechSynthesisUtterance.onboundary`).
 7. **Interaction**: drag to spin with inertia, tap or Enter to poke (surprised eyes + a safety tip), scroll wheel or `+`/`-` to zoom, arrow keys to turn, `R` to reset the view. Drawing pauses when the avatar is scrolled off-screen.
 
-### 3.5 Scroll-driven background (`public/morph.js`)
+### 3.8 Scroll-driven background (`public/morph.js`)
 
 1,200 particles morph between six cybersecurity shapes as you scroll the landing page:
 
@@ -153,7 +202,7 @@ sequenceDiagram
 
 Each shape is generated mathematically (Fibonacci sphere, rounded box + half-torus, almond eye). The scroll position between two sections blends the two point clouds and their colours, with a small outward "data scatter" during the transition.
 
-### 3.6 Languages
+### 3.9 Languages
 
 English plus all 22 languages of the **Eighth Schedule**: Assamese, Bengali, Bodo, Dogri, Gujarati, Hindi, Kannada, Kashmiri, Konkani, Maithili, Malayalam, Manipuri, Marathi, Nepali, Odia, Punjabi, Sanskrit, Santali, Sindhi, Tamil, Telugu, Urdu.
 
@@ -211,7 +260,7 @@ npm run dev                 # http://localhost:8080
 
 ### Tests
 ```bash
-npm test                    # 69 tests
+npm test                    # 87 tests
 npm run coverage            # line / branch coverage
 ```
 
@@ -221,6 +270,15 @@ gcloud run deploy chat-safe --source . --region asia-south1 --allow-unauthentica
   --set-env-vars GEMINI_MODEL=gemini-2.5-flash \
   --set-secrets GEMINI_API_KEY=gemini-api-key:latest
 ```
+
+### A note on the database
+Accounts use **`node:sqlite`**, which ships inside Node 22 — so there is still nothing to `npm install`. Set `DB_PATH` to keep the file somewhere durable:
+
+```bash
+DB_PATH=./chatsafe.db npm run dev
+```
+
+Cloud Run's container filesystem is ephemeral, so for a real deployment mount a volume or move to Cloud SQL. With no `DB_PATH` the database lives in memory, which is what the tests use. If `node:sqlite` is unavailable the server still starts — it just reports `accounts off` and the account page says so.
 
 ### Connect the chat apps (optional)
 Set the variables from `.env.example`, then open `/connect.html` — it shows which channels are live and prints the exact webhook URLs and the Telegram `setWebhook` command for your deployment.
@@ -246,6 +304,9 @@ Bot replies carry the risk score, the top warning signs, flagged UPI IDs and the
 | POST | `/api/analyze` | `{ text, lang }` | score, level, verdict, scamType, categoryIds, redFlags, nextSteps, indicators, upiChecks, complaint |
 | POST | `/api/upi-check` | `{ upi }` | `validated-format` / `not-validated` / `invalid` |
 | POST | `/api/decoy` | `{ text, lang, turn }` | `{ reply, engine }` |
+| POST | `/api/signup` · `/api/login` · `/api/logout` | `{ email, password, name }` | sets or clears an HttpOnly session cookie |
+| GET | `/api/me` | — | `{ user, accounts }` — who is signed in |
+| POST | `/api/progress` | `{ learned, scanned }` | records today's visit and returns the updated streak |
 | GET/POST | `/webhooks/telegram`, `/webhooks/meta` | platform payloads | signed webhooks for the chat-app bots |
 
 `lang` accepts any of the 23 codes or `"auto"` to detect the language from the message's script.
@@ -263,6 +324,7 @@ Chat_Safe/
 │   ├── upiCheck.js           # SEBI @valid Pay-Check
 │   ├── gemini.js             # Gemini client: analyse · agentReply · decoyReply
 │   ├── integrations.js       # Telegram + Meta webhooks, signature checks, replies
+│   ├── db.js                 # Accounts, sessions and streaks in SQLite (node:sqlite)
 │   ├── languages.js          # 23 languages, speech codes, script auto-detect
 │   ├── content.js            # Offline verdicts, steps, FAQ answers, Paati lines, 1930 draft
 │   └── lru.js                # Tiny LRU cache
@@ -270,6 +332,10 @@ Chat_Safe/
 │   ├── index.html            # Landing page: scroll story
 │   ├── app.html              # The app: Kavach, X-Ray, Pay-Check, Paati, case files
 │   ├── connect.html          # Chat-app connectors + setup guide
+│   ├── account.html          # Sign up, log in, streak and learning card
+│   ├── explainer.js/.css     # The wordless five-scene story
+│   ├── scamtypes.js          # The eight scams, in plain language
+│   ├── palettes.css          # Eight sea-creature colour palettes
 │   ├── avatar.js             # Kavach 3D avatar engine (5 eye expressions)
 │   ├── morph.js              # Scroll-driven particle morph (6 shapes)
 │   ├── demo.js               # Self-playing guided demo
@@ -289,9 +355,10 @@ Chat_Safe/
 
 ## 8. Quality checklist
 
+- **Accounts** — passwords are hashed with PBKDF2-HMAC-SHA256 (600,000 rounds) and a per-user random salt; the plain password is never stored or logged. Sessions are random 256-bit tokens in an **HttpOnly, SameSite=Lax** cookie, marked `Secure` behind HTTPS, expiring after 30 days. Login is rate-limited and locks an account for 15 minutes after 8 failures, and an unknown email does the same work as a wrong password so accounts cannot be enumerated.
 - **Security** — strict CSP (no inline scripts, no third-party code), `X-Frame-Options: DENY`, `nosniff`, HSTS, no-referrer. 16 KB body cap, 4,000-character text cap, control-character stripping, per-IP rate limiting, path-traversal-safe static server. Webhooks verify Telegram's secret token and Meta's HMAC signature in **constant time**, and duplicate deliveries are ignored. The Gemini key is read only from the environment and sent in a header, never in a URL. Prompt-injection guard: user text is wrapped in tags, declared as data, and the model's output is schema-checked and re-validated. The DOM is built with `textContent` only — no `innerHTML` anywhere. The Docker image runs as a non-root user.
 - **Efficiency** — zero dependencies, SHA-256-keyed LRU cache so repeat scans skip the AI call, a 12-second AI timeout with offline fallback, canvases capped at 2× device pixel ratio, animation paused off-screen, and a service worker that caches the shell but never the API.
-- **Testing** — 69 `node:test` unit and HTTP integration tests: multilingual detection, false-positive guards, all 23 languages, script auto-detect, the agent's scan and chat modes, webhook signature rejection, de-duplication, channel formatting, the browser bundle, AI-failure fallback, caching, rate limiting, input validation, security headers and path traversal.
+- **Testing** — 87 `node:test` unit and HTTP integration tests: multilingual detection, false-positive guards, all 23 languages, script auto-detect, the agent's scan and chat modes, webhook signature rejection, de-duplication, channel formatting, the browser bundle, AI-failure fallback, caching, rate limiting, input validation, security headers, path traversal, password hashing, session expiry, lockout, streak arithmetic across day boundaries, and that every one of the eight teaching samples is actually caught by the engine.
 - **Accessibility** — see the table in §2.
 
 ## 9. Demo script (3 minutes)
