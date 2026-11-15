@@ -50,7 +50,7 @@ window.ChatSafeAPI = (() => {
   }
 
   /**
-   * @param {'agent'|'analyze'|'decoy'|'upi-check'|'languages'|'integrations'} path
+   * @param {'agent'|'analyze'|'autopilot'|'decoy'|'upi-check'|'languages'|'integrations'} path
    * @param {object} [body] omit for GET
    */
   async function call(path, body) {
@@ -66,6 +66,7 @@ window.ChatSafeAPI = (() => {
     const handlers = {
       agent: local.agent,
       analyze: local.analyze,
+      autopilot: local.autopilot,
       decoy: local.decoy,
       'upi-check': local.upiCheck,
       languages: async () => local.languages(),

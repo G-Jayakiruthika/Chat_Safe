@@ -121,14 +121,30 @@
     },
   };
 
-  const COLORS = {
-    globe: [34, 211, 238],
-    attack: [248, 113, 113],
-    shield: [52, 211, 153],
-    lock: [251, 191, 36],
-    ring: [167, 139, 250],
-    eye: [34, 211, 238],
-  };
+  /**
+   * Shape colours follow the page's current palette, so the background changes
+   * identity with the section. Only "attack" stays red, because danger should
+   * read the same whatever the palette.
+   */
+  const ROLE = { globe: '--accent', attack: null, shield: '--accent2', lock: '--accent4', ring: '--accent3', eye: '--accent' };
+  const DANGER = [239, 68, 68];
+  const probe = document.createElement('span');
+
+  /** Resolve a CSS custom property to [r,g,b], whatever notation it uses. */
+  function cssRgb(varName, fallback) {
+    try {
+      probe.style.color = `var(${varName})`;
+      probe.style.display = 'none';
+      document.body.append(probe);
+      const m = getComputedStyle(probe).color.match(/\d+/g);
+      probe.remove();
+      return m && m.length >= 3 ? [+m[0], +m[1], +m[2]] : fallback;
+    } catch {
+      return fallback;
+    }
+  }
+
+  const colorFor = (shape) => (ROLE[shape] ? cssRgb(ROLE[shape], [120, 140, 220]) : DANGER);
 
   const smooth = (t) => t * t * (3 - 2 * t);
 
@@ -243,8 +259,8 @@
       const k = smooth(Math.min(1, smoothF - i));
       const A = shapeOf(names[i]);
       const B = shapeOf(names[Math.min(names.length - 1, i + 1)]);
-      const ca = COLORS[names[i]] || COLORS.globe;
-      const cb = COLORS[names[Math.min(names.length - 1, i + 1)]] || COLORS.globe;
+      const ca = colorFor(names[i]);
+      const cb = colorFor(names[Math.min(names.length - 1, i + 1)]);
       const col = ca.map((v, j) => Math.round(v + (cb[j] - v) * k));
 
       const nearest = Math.round(smoothF);

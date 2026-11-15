@@ -45,8 +45,8 @@
         n.textContent = text;
         return n;
       };
-      const ico = el('span', 'ico', t.icon);
-      ico.setAttribute('aria-hidden', 'true');
+      const ico = el('span', 'ico');
+      ico.append(window.scamIcon ? window.scamIcon(t.id, 34) : document.createTextNode(t.icon));
       card.append(ico, el('span', 'nm', t.name), el('p', 'says', `\u201c${t.says}\u201d`), el('p', 'rule', t.rule), el('span', 'cta', 'Try this one \u2192'));
       if (learned.includes(t.id)) {
         const b = el('span', 'badge-learned', '\u2705');

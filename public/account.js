@@ -41,8 +41,8 @@
       const got = user.learned.includes(t.id);
       li.className = got ? 'got' : '';
       const ico = document.createElement('span');
-      ico.setAttribute('aria-hidden', 'true');
-      ico.textContent = t.icon;
+      ico.className = 'ico-sm';
+      ico.append(window.scamIcon ? window.scamIcon(t.id, 22) : document.createTextNode(t.icon));
       const nm = document.createElement('span');
       nm.textContent = t.name;
       const mark = document.createElement('span');

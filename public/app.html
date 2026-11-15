@@ -101,11 +101,81 @@
     </section>
 
     <nav class="tabs reveal" role="tablist" aria-label="Chat_Safe tools">
-      <button role="tab" id="tab-xray" aria-controls="panel-xray" aria-selected="true" data-i18n="tabXray">🔍 Scan a message</button>
+      <button role="tab" id="tab-auto" aria-controls="panel-auto" aria-selected="true" data-i18n="tabAuto">🤖 Autopilot</button>
+      <button role="tab" id="tab-xray" aria-controls="panel-xray" aria-selected="false" tabindex="-1" data-i18n="tabXray">🔍 Scan a message</button>
       <button role="tab" id="tab-pay" aria-controls="panel-pay" aria-selected="false" tabindex="-1" data-i18n="tabPay">✅ Check before you pay</button>
       <button role="tab" id="tab-paati" aria-controls="panel-paati" aria-selected="false" tabindex="-1" data-i18n="tabPaati">👵 Paati decoy</button>
+      <button role="tab" id="tab-game" aria-controls="panel-game" aria-selected="false" tabindex="-1" data-i18n="tabGame">🎮 Scam or Safe</button>
       <button role="tab" id="tab-learn" aria-controls="panel-learn" aria-selected="false" tabindex="-1" data-i18n="tabLearn">🎓 Learn the 8 scams</button>
     </nav>
+
+
+    <!-- Autopilot: scan a pile at once, then do the work -->
+    <section id="panel-auto" role="tabpanel" aria-labelledby="tab-auto" class="panel glass">
+      <div class="auto-head">
+        <div>
+          <h2 class="auto-title" data-i18n="autoTitle">Let Chat_Safe do the work</h2>
+          <p class="help" data-i18n="autoHelp">Paste everything you are unsure about — one message per line, or a whole chat. Chat_Safe checks them all, then writes the reply, the complaint and the family warning for you.</p>
+        </div>
+        <span class="auto-badge" id="autoBadge" hidden></span>
+      </div>
+
+      <form id="autoForm" novalidate>
+        <label for="autoInput" class="label" data-i18n="autoLabel">Messages to check</label>
+        <textarea id="autoInput" rows="6" maxlength="20000" dir="auto" required
+          data-i18n-placeholder="autoPlaceholder"
+          placeholder="Paste one message per line…"></textarea>
+
+        <fieldset class="auto-switches">
+          <legend data-i18n="autoSwitches">What should Chat_Safe handle by itself?</legend>
+          <label class="sw"><input type="checkbox" id="auScan" checked><span></span><b data-i18n="auScan">Check every new message automatically</b></label>
+          <label class="sw"><input type="checkbox" id="auReply" checked><span></span><b data-i18n="auReply">Write a safe reply to the sender</b></label>
+          <label class="sw"><input type="checkbox" id="auWarn"><span></span><b data-i18n="auWarn">Warn my family group</b></label>
+          <label class="sw"><input type="checkbox" id="auReport"><span></span><b data-i18n="auReport">Report the number for me</b></label>
+          <label class="sw"><input type="checkbox" id="auBlock"><span></span><b data-i18n="auBlock">Block and delete the thread</b></label>
+          <label class="sw"><input type="checkbox" id="auDigest" checked><span></span><b data-i18n="auDigest">Send me a daily summary</b></label>
+        </fieldset>
+
+        <div class="actions">
+          <button type="submit" class="primary" id="autoRun" data-i18n="autoRun">🤖 Run Autopilot</button>
+          <button type="button" class="secondary" id="autoSample" data-i18n="autoSample">Fill an example pile</button>
+        </div>
+      </form>
+
+      <div id="autoOut" class="auto-out" hidden aria-live="polite"></div>
+    </section>
+
+
+    <!-- Scam or Safe: the daily game -->
+    <section id="panel-game" role="tabpanel" aria-labelledby="tab-game" class="panel glass">
+      <div class="g-top">
+        <p class="g-hud"><span id="gHearts" class="g-hearts" role="status">❤️❤️❤️</span></p>
+        <p class="g-hud"><span aria-hidden="true">🔥</span> <span data-i18n="gStreak">Streak</span> <strong id="gStreak">0</strong></p>
+        <p class="g-hud"><span aria-hidden="true">⭐</span> <span data-i18n="gScore">Score</span> <strong id="gScore">0</strong></p>
+      </div>
+      <div id="gProgress" class="g-progress" role="progressbar" aria-label="Cards played" aria-valuemin="0" aria-valuenow="0" aria-valuemax="10"></div>
+
+      <div id="gameBoard" class="g-board">
+        <p class="g-ask" data-i18n="gAsk">Is this message safe, or a scam?</p>
+        <article id="gCard" class="g-card" tabindex="0" aria-label="Message to judge">
+          <span class="g-chat-tail" aria-hidden="true"></span>
+          <p id="gText" class="g-text"></p>
+        </article>
+        <div id="gResult" class="g-result" hidden aria-live="polite"></div>
+        <div class="g-choices">
+          <button type="button" id="gScam" class="g-btn g-btn-scam">
+            <span class="g-btn-ico" aria-hidden="true">⚠️</span>
+            <span data-i18n="gScam">SCAM</span>
+          </button>
+          <button type="button" id="gSafe" class="g-btn g-btn-safe">
+            <span class="g-btn-ico" aria-hidden="true">🛡️</span>
+            <span data-i18n="gSafe">SAFE</span>
+          </button>
+        </div>
+        <p class="help g-hint" data-i18n="gHint">Swipe the card left for scam, right for safe — or use the buttons.</p>
+      </div>
+      <div id="gDone" hidden></div>
+    </section>
 
     <!-- Scam X-Ray -->
     <section id="panel-xray" role="tabpanel" aria-labelledby="tab-xray" class="panel glass">
@@ -242,6 +312,7 @@
     <p data-i18n="footer">Chat_Safe gives guidance, not legal advice. In an emergency call 1930 (cyber fraud) or 112.</p>
   </footer>
 
+  <script src="icons.js" defer></script>
   <script src="scamtypes.js" defer></script>
   <script src="i18n.js" defer></script>
   <script src="api.js" defer></script>
@@ -249,7 +320,10 @@
   <script src="sound.js" defer></script>
   <script src="fx.js" defer></script>
   <script src="avatar.js" defer></script>
+  <script src="autopilot.js" defer></script>
+  <script src="game.js" defer></script>
   <script src="app.js" defer></script>
   <script src="demo.js" defer></script>
+  <script src="/cursor.js" defer></script>
 </body>
 </html>

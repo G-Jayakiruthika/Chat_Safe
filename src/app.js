@@ -211,6 +211,7 @@ function createHandler({ gemini, env = {}, fetchImpl, logger = console, db = nul
     'GET /api/languages': async () => engine.languages(),
     'GET /api/integrations': async () => integrations.status(),
     'POST /api/agent': engine.agent,
+    'POST /api/autopilot': engine.autopilot,
     'POST /api/analyze': engine.analyze,
     'POST /api/decoy': engine.decoy,
     'POST /api/upi-check': engine.upiCheck,

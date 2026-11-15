@@ -13,8 +13,10 @@ const { checkUpi } = require('./upiCheck');
 const { safeLang, localized, VERDICT, STEPS, decoyFallback, agentFallback, buildComplaint } = require('./content');
 const { LANGUAGES, detectLanguage } = require('./languages');
 const { createLru } = require('./lru');
+const { buildPlan } = require('./autopilot');
 
 const MAX_TEXT_CHARS = 4000;
+const MAX_BATCH = 20;
 const CACHE_SIZE = 200;
 
 class InputError extends Error {
@@ -144,6 +146,42 @@ function createEngine({ gemini = OFFLINE_GEMINI, logger = console } = {}) {
     return { reply: reply || decoyFallback(lang, turn), engine: reply ? gemini.model : 'offline script' };
   }
 
+  /**
+   * Autopilot: scan a batch of messages in one pass and return the finished work
+   * for the worst one — the reply to send, the complaint to file, who to warn.
+   * This is what turns a pile of forwarded messages into a single decision.
+   */
+  async function autopilot(body) {
+    const raw = Array.isArray(body.messages) ? body.messages : [body.text];
+    const messages = raw.filter((m) => typeof m === 'string' && m.trim()).slice(0, MAX_BATCH);
+    if (!messages.length) throw new InputError(400, 'Field "messages" is required');
+
+    const items = [];
+    for (const text of messages) {
+      const a = await analyze({ text, lang: body.lang });
+      items.push({
+        text: text.length > 240 ? `${text.slice(0, 240)}…` : text,
+        score: a.score, level: a.level, scamType: a.scamType, verdict: a.verdict,
+        categoryIds: a.categoryIds, analysis: a,
+      });
+    }
+    items.sort((x, y) => y.score - x.score);
+    const worst = items[0];
+    const plan = buildPlan(worst.analysis, {
+      lang: body.lang, connected: body.connected, autoActions: body.autoActions,
+    });
+    const counts = {};
+    for (const i of items) counts[i.level] = (counts[i.level] || 0) + 1;
+    return {
+      scanned: items.length,
+      counts,
+      lang: worst.analysis.lang,
+      worst: { text: worst.text, score: worst.score, level: worst.level, scamType: worst.scamType, verdict: worst.verdict },
+      items: items.map(({ analysis, ...rest }) => rest),
+      plan,
+    };
+  }
+
   async function upiCheck(body) {
     if (typeof body.upi !== 'string' || body.upi.length > 300) throw new InputError(400, 'Field "upi" is required');
     return checkUpi(body.upi);
@@ -152,6 +190,7 @@ function createEngine({ gemini = OFFLINE_GEMINI, logger = console } = {}) {
   return {
     analyze,
     agent,
+    autopilot,
     decoy,
     upiCheck,
     languages: () => ({ languages: LANGUAGES }),

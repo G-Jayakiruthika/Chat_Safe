@@ -11,7 +11,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const SRC = path.join(__dirname, '..', 'src');
-const MODULES = ['languages', 'lru', 'rules', 'extract', 'upiCheck', 'content', 'engine'];
+const MODULES = ['languages', 'lru', 'rules', 'extract', 'upiCheck', 'content', 'autopilot', 'engine'];
 
 function buildCore() {
   const defs = MODULES.map((name) => {

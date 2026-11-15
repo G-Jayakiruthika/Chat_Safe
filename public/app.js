@@ -552,8 +552,8 @@
         n.textContent = text;
         return n;
       };
-      const ico = el('span', 'ico', t.icon);
-      ico.setAttribute('aria-hidden', 'true');
+      const ico = el('span', 'ico');
+      ico.append(window.scamIcon ? window.scamIcon(t.id, 34) : document.createTextNode(t.icon));
       card.append(ico, el('span', 'nm', t.name), el('p', 'says', `\u201c${t.says}\u201d`), el('p', 'rule', t.rule), el('span', 'cta', t.id === 'investment' ? 'Scan this one \u2192' : 'Scan this one \u2192'));
       if (learnedSet.has(t.id)) {
         const b = el('span', 'badge-learned', '\u2705');
@@ -630,7 +630,7 @@
     const idx = [...day].reduce((n, ch) => n + ch.charCodeAt(0), 0) % types.length;
     const t = types[idx];
     if (load('dailySeen') === day) return;
-    $('dailyTitle').textContent = `${t.icon}  ${t.name}`;
+    $('dailyTitle').replaceChildren(window.scamIcon ? window.scamIcon(t.id, 22) : document.createTextNode(t.icon), ` ${t.name}`);
     $('dailySays').textContent = `\u201c${t.says}\u201d`;
     $('dailyRule').textContent = t.rule;
     $('daily').hidden = false;

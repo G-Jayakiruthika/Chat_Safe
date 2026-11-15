@@ -1,191 +1,154 @@
 'use strict';
 
 /**
- * The silent explainer: a looping, wordless animation that shows what Chat_Safe does.
+ * The wordless explainer, built like a village safety poster rather than a slideshow:
+ * all three panels are visible at once, left to right, with big arrows between them, so
+ * the whole story is grasped in one look even by someone who cannot read.
  *
- * It is built for someone who cannot read and cannot hear the audio. Every beat is
- * carried by a picture, a colour and a movement:
- *   1  a stranger calls and demands money      (red, shaking phone, money flying away)
- *   2  Kavach listens and scans the call       (blue, a scanning beam)
- *   3  Kavach says STOP — this is a scam       (red, furious face, a raised palm)
- *   4  you hang up                             (the call is cut)
- *   5  you dial 1930 and your money is safe    (green, shield, tick)
+ *   ❶ RED    a stranger on the phone pulls money out of your pocket
+ *   ❷ BLUE   Chat_Safe's shield looks at the call
+ *   ❸ GREEN  a raised hand stops it, the money stays, and 1930 is dialled
  *
- * The only glyphs used are a number (1930) and universally understood pictograms.
- * It auto-plays muted, loops, can be paused, and freezes on one frame when the
- * visitor prefers reduced motion.
+ * Nothing depends on words. Each panel carries a colour (red = danger, blue = checking,
+ * green = safe), one large picture, and motion that shows cause and effect. The only
+ * characters used are the number 1930 and a ₹ sign.
  */
 (() => {
-  const SCENES = [
-    {
-      id: 'call',
-      tone: 'bad',
-      label: 'A stranger calls and demands money',
-      build: (el) => {
-        el.append(
-          fig('👤', 'ex-actor ex-stranger', 'The caller'),
-          arrow('ex-money', '💸'),
-          fig('📞', 'ex-actor ex-phone ex-ring', 'Your phone ringing'),
-          fig('🧓', 'ex-actor ex-you', 'You'),
-        );
-      },
-    },
-    {
-      id: 'scan',
-      tone: 'scan',
-      label: 'Kavach listens and checks the call',
-      build: (el) => {
-        el.append(fig('📞', 'ex-actor ex-phone', 'The call'), shield('scanning'), beam());
-      },
-    },
-    {
-      id: 'warn',
-      tone: 'bad',
-      label: 'Kavach warns you: this is a scam',
-      build: (el) => {
-        el.append(shield('alarm'), fig('✋', 'ex-actor ex-stop', 'Stop'), fig('🧓', 'ex-actor ex-you ex-shocked', 'You'));
-      },
-    },
-    {
-      id: 'hangup',
-      tone: 'bad',
-      label: 'You hang up and send no money',
-      build: (el) => {
-        el.append(fig('📵', 'ex-actor ex-cut', 'Call ended'), strike(), fig('💸', 'ex-actor ex-money-blocked', 'No money sent'));
-      },
-    },
-    {
-      id: 'safe',
-      tone: 'good',
-      label: 'You call 1930 and your money is safe',
-      build: (el) => {
-        el.append(shield('safe'), fig('☎️', 'ex-actor ex-dial', 'Dial'), num('1930'), fig('✅', 'ex-actor ex-tick', 'Safe'));
-      },
-    },
-  ];
+  const NS = 'http://www.w3.org/2000/svg';
 
-  const make = (tag, cls, text) => {
+  const el = (tag, cls, text) => {
     const n = document.createElement(tag);
     if (cls) n.className = cls;
     if (text) n.textContent = text;
     return n;
   };
-  /** A pictogram with a hidden label, so screen readers still get the story. */
-  const fig = (glyph, cls, label) => {
-    const n = make('span', `ex-fig ${cls}`);
+
+  /** A pictogram with a spoken-word label for screen readers. */
+  function pic(glyph, cls, label) {
+    const n = el('span', `xp-pic ${cls}`, glyph);
     n.setAttribute('role', 'img');
     n.setAttribute('aria-label', label);
-    n.textContent = glyph;
     return n;
-  };
-  const arrow = (cls, glyph) => {
-    const n = make('span', `ex-arrow ${cls}`);
-    n.setAttribute('aria-hidden', 'true');
-    n.textContent = glyph;
-    return n;
-  };
-  const beam = () => {
-    const n = make('span', 'ex-beam');
-    n.setAttribute('aria-hidden', 'true');
-    return n;
-  };
-  const strike = () => {
-    const n = make('span', 'ex-strike');
-    n.setAttribute('aria-hidden', 'true');
-    return n;
-  };
-  const num = (t) => make('span', 'ex-num', t);
+  }
 
-  /** Kavach as a simple shield face, so the explainer matches the real avatar. */
-  function shield(state) {
-    const n = make('span', `ex-shield ${state}`);
+  /** The guardian's face: a shield whose eyes and brows carry the verdict. */
+  function shield(state, label) {
+    const n = el('span', `xp-shield xp-${state}`);
     n.setAttribute('role', 'img');
-    n.setAttribute('aria-label', 'Kavach, your guardian');
-    const eyes = make('span', 'ex-eyes');
-    eyes.append(make('i'), make('i'));
-    const brows = make('span', 'ex-brows');
-    brows.append(make('i'), make('i'));
+    n.setAttribute('aria-label', label);
+    const brows = el('span', 'xp-brows');
+    brows.append(el('i'), el('i'));
+    const eyes = el('span', 'xp-eyes');
+    eyes.append(el('i'), el('i'));
     n.append(brows, eyes);
     return n;
   }
 
+  /** A fat arrow between panels, drawn so it reads at any size. */
+  function arrow() {
+    const svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('viewBox', '0 0 40 24');
+    svg.setAttribute('class', 'xp-arrow');
+    svg.setAttribute('aria-hidden', 'true');
+    const path = document.createElementNS(NS, 'path');
+    path.setAttribute('d', 'M2 12h30M26 5l8 7-8 7');
+    path.setAttribute('fill', 'none');
+    path.setAttribute('stroke', 'currentColor');
+    path.setAttribute('stroke-width', '3.4');
+    path.setAttribute('stroke-linecap', 'round');
+    path.setAttribute('stroke-linejoin', 'round');
+    svg.append(path);
+    return svg;
+  }
+
+  const PANELS = [
+    {
+      tone: 'danger',
+      step: '1',
+      label: 'Step 1. A stranger on the phone takes your money.',
+      build: (stage) => {
+        stage.append(
+          pic('🧓', 'xp-person', 'You'),
+          el('span', 'xp-cash xp-cash-out', '₹'),
+          pic('📱', 'xp-phone xp-shake', 'A phone call'),
+          pic('😠', 'xp-face', 'An angry stranger'),
+        );
+      },
+    },
+    {
+      tone: 'check',
+      step: '2',
+      label: 'Step 2. Chat_Safe looks at the call for you.',
+      build: (stage) => {
+        stage.append(pic('📱', 'xp-phone', 'The same call'), shield('check', 'Chat_Safe checking'), el('span', 'xp-beam'));
+      },
+    },
+    {
+      tone: 'safe',
+      step: '3',
+      label: 'Step 3. You stop, your money stays, and you call 1930.',
+      build: (stage) => {
+        stage.append(
+          pic('✋', 'xp-stop', 'Stop'),
+          el('span', 'xp-cash xp-cash-stay', '₹'),
+          el('span', 'xp-num', '1930'),
+        );
+      },
+    },
+  ];
+
   /**
    * @param {HTMLElement} root
-   * @param {{reducedMotion?: boolean, onScene?: (i: number) => void}} [opts]
+   * @param {{reducedMotion?: boolean}} [opts]
    */
   function createExplainer(root, opts = {}) {
     const reduced = Boolean(opts.reducedMotion);
-    const stage = make('div', 'ex-stage');
-    const caption = make('p', 'ex-caption');
-    const dots = make('div', 'ex-dots');
-    dots.setAttribute('role', 'tablist');
-    dots.setAttribute('aria-label', 'Story steps');
+    root.classList.add('xp');
+    const strip = el('div', 'xp-strip');
+    strip.setAttribute('role', 'list');
 
-    const scenes = SCENES.map((s, i) => {
-      const el = make('div', `ex-scene tone-${s.tone}`);
-      el.dataset.id = s.id;
-      s.build(el);
-      stage.append(el);
-
-      const d = make('button', 'ex-dot');
-      d.type = 'button';
-      d.setAttribute('role', 'tab');
-      d.setAttribute('aria-label', `Step ${i + 1}: ${s.label}`);
-      d.addEventListener('click', () => {
-        show(i);
-        stop();
-      });
-      dots.append(d);
-      return { el, dot: d, meta: s };
+    const panels = PANELS.map((p, i) => {
+      const panel = el('div', `xp-panel xp-tone-${p.tone}`);
+      panel.setAttribute('role', 'listitem');
+      panel.setAttribute('aria-label', p.label);
+      const badge = el('span', 'xp-step', p.step);
+      badge.setAttribute('aria-hidden', 'true');
+      const stage = el('div', 'xp-stage');
+      p.build(stage);
+      panel.append(badge, stage);
+      strip.append(panel);
+      if (i < PANELS.length - 1) {
+        const a = el('div', 'xp-arrow-wrap');
+        a.append(arrow());
+        strip.append(a);
+      }
+      return panel;
     });
 
-    const playBtn = make('button', 'ex-play');
-    playBtn.type = 'button';
-    playBtn.setAttribute('aria-label', 'Pause the story');
-    playBtn.textContent = '⏸';
+    root.append(strip);
 
-    const bar = make('div', 'ex-bar');
-    bar.append(make('span'));
-
-    root.append(stage, bar, dots, caption, playBtn);
-
-    let i = -1;
+    // Each panel lights up in turn, so the eye is led left to right.
+    let i = 0;
     let timer = null;
-
-    function show(next) {
-      i = (next + scenes.length) % scenes.length;
-      scenes.forEach((s, n) => {
-        s.el.classList.toggle('on', n === i);
-        s.dot.setAttribute('aria-selected', String(n === i));
-      });
-      root.dataset.tone = scenes[i].meta.tone;
-      caption.textContent = scenes[i].meta.label;
-      bar.firstChild.style.width = `${((i + 1) / scenes.length) * 100}%`;
-      opts.onScene?.(i);
-    }
-
-    function play() {
-      stop();
-      timer = setInterval(() => show(i + 1), 3400);
-      playBtn.textContent = '⏸';
-      playBtn.setAttribute('aria-label', 'Pause the story');
-    }
-    function stop() {
+    const light = (n) => panels.forEach((p, k) => p.classList.toggle('lit', k === n));
+    const tick = () => {
+      i = (i + 1) % panels.length;
+      light(i);
+    };
+    const play = () => {
       clearInterval(timer);
-      timer = null;
-      playBtn.textContent = '▶';
-      playBtn.setAttribute('aria-label', 'Play the story');
+      timer = setInterval(tick, 2200);
+    };
+    const stop = () => clearInterval(timer);
+
+    light(0);
+    if (!reduced) {
+      new IntersectionObserver(([e]) => (e.isIntersecting ? play() : stop()), { threshold: 0.25 }).observe(root);
+    } else {
+      panels.forEach((p) => p.classList.add('lit'));
     }
-
-    playBtn.addEventListener('click', () => (timer ? stop() : play()));
-    // Only run while on screen, so it never burns battery in the background.
-    new IntersectionObserver(([e]) => (e.isIntersecting && !reduced ? play() : stop()), { threshold: 0.3 }).observe(root);
-
-    show(0);
-    if (!reduced) play();
-    return { show, play, stop, get scene() { return i; } };
+    return { play, stop };
   }
 
   window.createExplainer = createExplainer;
-  window.EXPLAINER_SCENES = SCENES.map((s) => s.label);
 })();
